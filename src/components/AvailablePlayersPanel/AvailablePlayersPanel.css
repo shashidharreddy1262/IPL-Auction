@@ -1,0 +1,34 @@
+.available-panel {
+  overflow: hidden;
+}
+
+.available-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.available-list {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.available-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.available-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
+.empty-state {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+

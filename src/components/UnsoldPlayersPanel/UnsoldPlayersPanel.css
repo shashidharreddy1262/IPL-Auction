@@ -1,0 +1,28 @@
+.unsold-panel {
+  overflow: hidden;
+}
+
+.unsold-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.unsold-list {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.unsold-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.unsold-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+

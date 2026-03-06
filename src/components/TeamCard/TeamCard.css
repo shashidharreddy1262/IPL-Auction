@@ -1,0 +1,134 @@
+.team-card {
+  padding: 9px 10px 8px;
+  border-radius: 12px;
+  background: radial-gradient(circle at top, #141b36 0, #050814 70%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.team-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.team-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.team-short {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.team-full-name {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.team-count {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.team-count-max {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.team-body {
+  min-height: 40px;
+  max-height: 132px;
+  overflow-y: auto;
+  padding-right: 3px;
+}
+
+.team-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.team-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
+.team-empty {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.team-players {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.team-player-row {
+  display: grid;
+  grid-template-columns: 1.6fr 0.9fr 1.1fr;
+  gap: 4px;
+  font-size: 0.75rem;
+}
+
+.team-player-row .name {
+  font-weight: 500;
+}
+
+.team-player-row .role {
+  color: var(--text-muted);
+}
+
+.team-player-row .price {
+  text-align: right;
+}
+
+.team-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.team-bid-button {
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  transition: background-color var(--transition-fast), transform var(--transition-fast),
+    box-shadow var(--transition-fast), opacity var(--transition-fast);
+}
+
+.team-bid-button--leading {
+  background: var(--accent);
+  color: #050814;
+}
+
+.team-bid-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-0.5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.team-bid-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.team-full-warning {
+  font-size: 0.7rem;
+  color: var(--danger);
+}
+
