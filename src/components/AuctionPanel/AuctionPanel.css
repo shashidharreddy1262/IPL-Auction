@@ -26,6 +26,14 @@
   border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
+.auction-player-info--draggable {
+  cursor: grab;
+}
+
+.auction-player-info--draggable:active {
+  cursor: grabbing;
+}
+
 .auction-player-main {
   display: flex;
   justify-content: space-between;
@@ -111,6 +119,45 @@
 .auction-hint {
   font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+.auction-buttons-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.auction-button--increase {
+  background: var(--accent);
+  color: #050814;
+}
+
+.auction-button--increase:hover {
+  background: var(--accent-strong);
+  transform: translateY(-0.5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.auction-sell-group {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.auction-sell-select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(10, 18, 40, 0.95);
+  color: var(--text-main);
+  font-size: 0.75rem;
+  min-width: 140px;
+  cursor: pointer;
+}
+
+.auction-sell-select:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .auction-clear {

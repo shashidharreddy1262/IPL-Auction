@@ -10,6 +10,7 @@ interface TeamsPanelProps {
   currentBidCr: number | null;
   currentBidTeamId: string | null;
   onTeamBid: (teamId: string) => void;
+  onSellToTeam: (teamId: string) => void;
 }
 
 const TeamsPanel: React.FC<TeamsPanelProps> = ({
@@ -18,6 +19,7 @@ const TeamsPanel: React.FC<TeamsPanelProps> = ({
   currentBidCr,
   currentBidTeamId,
   onTeamBid,
+  onSellToTeam,
 }) => {
   return (
     <section className="panel-card teams-panel">
@@ -38,6 +40,7 @@ const TeamsPanel: React.FC<TeamsPanelProps> = ({
               isLeadingBidder={isLeading}
               canBid={canBid}
               onBid={() => onTeamBid(team.id)}
+              onSellToTeam={onSellToTeam}
             />
           );
         })}

@@ -26,6 +26,15 @@ export function canTeamBidForPlayer(team: TeamWithPlayers): boolean {
   return team.players.length < team.maxPlayers;
 }
 
+export function getRemainingPurseCr(team: TeamWithPlayers): number {
+  const spent = team.players.reduce((sum, p) => sum + (p.soldPriceCr ?? 0), 0);
+  return team.budgetCr - spent;
+}
+
+export function canTeamAfford(team: TeamWithPlayers, priceCr: number): boolean {
+  return getRemainingPurseCr(team) >= priceCr;
+}
+
 export function movePlayerToTeam(
   teams: TeamWithPlayers[],
   player: Player,

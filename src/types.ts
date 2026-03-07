@@ -11,6 +11,7 @@ export interface Player {
   status: PlayerStatus;
   soldPriceCr?: number;
   soldToTeamId?: string;
+  setId: string; // which auction set this player belongs to (e.g. marquee, batsmen)
 }
 
 export interface Team {
@@ -20,8 +21,14 @@ export interface Team {
   primaryColor: string;
   secondaryColor: string;
   maxPlayers: number; // usually 25
+  budgetCr: number; // total purse, e.g. 120
 }
 
 export interface TeamWithPlayers extends Team {
   players: Player[];
+}
+
+export interface AuctionSet {
+  id: string;
+  name: string;
 }

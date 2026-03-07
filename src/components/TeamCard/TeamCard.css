@@ -7,6 +7,14 @@
   flex-direction: column;
   gap: 6px;
   box-shadow: var(--shadow-subtle);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.team-card--drag-over {
+  border-color: var(--accent-strong) !important;
+  box-shadow: 0 0 0 2px rgba(255, 191, 105, 0.5);
+  background: radial-gradient(circle at top, rgba(255, 159, 28, 0.12) 0, #141b36 50%, #050814 90%) !important;
 }
 
 .team-header {
@@ -28,9 +36,26 @@
   letter-spacing: 0.16em;
 }
 
+.team-short-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
 .team-full-name {
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.team-purse {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.team-purse strong {
+  color: var(--accent-strong);
 }
 
 .team-count {
