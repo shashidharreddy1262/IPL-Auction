@@ -1,24 +1,53 @@
 import React, { useEffect } from 'react';
 import './Toast.css';
+import { formatPriceCr } from '../../utils/auction';
 
 export type ToastType = 'sold' | 'unsold';
 
-interface ToastProps {
-  message: string;
+export interface ToastData {
   type: ToastType;
+  playerName: string;
+  teamName?: string;
+  priceCr?: number;
+}
+
+interface ToastProps {
+  data: ToastData;
+  soldImageUrl?: string;
   onDismiss: () => void;
   duration?: number;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, type, onDismiss, duration = 3500 }) => {
+const Toast: React.FC<ToastProps> = ({ data, soldImageUrl, onDismiss, duration = 2000 }) => {
   useEffect(() => {
     const t = setTimeout(onDismiss, duration);
     return () => clearTimeout(t);
   }, [onDismiss, duration]);
 
   return (
-    <div className={`toast toast--${type}`} role="alert">
-      <span className="toast-message">{message}</span>
+    <div className={`toast toast--inline toast--${data.type}`} role="alert">
+      {data.type === 'sold' && soldImageUrl && (
+        <img src={soldImageUrl} alt="" className="toast-sold-icon" />
+      )}
+      <div className="toast-content">
+        {data.type === 'sold' && (
+          <>
+            <span className="toast-player">{data.playerName}</span>
+            {data.teamName != null && (
+              <span className="toast-detail">Sold to {data.teamName}</span>
+            )}
+            {data.priceCr != null && (
+              <span className="toast-price">{formatPriceCr(data.priceCr)}</span>
+            )}
+          </>
+        )}
+        {data.type === 'unsold' && (
+          <>
+            <span className="toast-heading">UNSOLD</span>
+            <span className="toast-detail">No bids received</span>
+          </>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,45 +1,55 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './AuctionPanel.css';
 import type { Player, TeamWithPlayers } from '../../types';
 import { canTeamAfford, canTeamBidForPlayer, formatPriceCr, getNextBid } from '../../utils/auction';
+import Toast from '../Toast/Toast';
+import type { ToastData } from '../Toast/Toast';
 
 interface AuctionPanelProps {
+  auctionStarted: boolean;
+  onStartAuction: () => void;
   currentPlayer: Player | null;
   currentBidCr: number | null;
   teams: TeamWithPlayers[];
   currentBidTeamId: string | null;
+  selectedSellTeamId: string;
+  onSelectSellTeamId: (teamId: string) => void;
   onBid: (teamId: string) => void;
-  onIncreaseBid: () => void;
   onSellToTeam: (teamId: string) => void;
   onUnsold: () => void;
-  onClear: () => void;
+  onEndAuction: () => void;
+  selectedSetName?: string;
+  currentSetCompleted: boolean;
+  nextSetName?: string;
+  toast: ToastData | null;
+  onDismissToast: () => void;
+  soldImageUrl?: string;
 }
 
 const DRAG_TYPE_LIVE_PLAYER = 'application/ipl-auction-live-player';
 
 const AuctionPanel: React.FC<AuctionPanelProps> = ({
+  auctionStarted,
+  onStartAuction,
   currentPlayer,
   currentBidCr,
   teams,
   currentBidTeamId,
+  selectedSellTeamId,
+  onSelectSellTeamId,
   onBid,
-  onIncreaseBid,
   onSellToTeam,
   onUnsold,
-  onClear,
+  onEndAuction,
+  selectedSetName,
+  currentSetCompleted,
+  nextSetName,
+  toast,
+  onDismissToast,
+  soldImageUrl,
 }) => {
-  const [selectedSellTeamId, setSelectedSellTeamId] = useState<string>(currentBidTeamId ?? '');
+  const [showEndConfirm, setShowEndConfirm] = useState(false);
   const leadingTeam = teams.find((t) => t.id === currentBidTeamId) || null;
-
-  useEffect(() => {
-    if (currentBidTeamId) {
-      setSelectedSellTeamId(currentBidTeamId);
-    } else if (currentPlayer) {
-      const firstAvailable = teams.find((t) => canTeamBidForPlayer(t));
-      setSelectedSellTeamId((prev) => prev || firstAvailable?.id || teams[0]?.id || '');
-    }
-  }, [currentPlayer, currentBidTeamId, teams]);
-
   const effectiveSellTeamId = selectedSellTeamId || currentBidTeamId || (teams[0]?.id ?? '');
   const selectedTeam = teams.find((t) => t.id === effectiveSellTeamId);
   const soldPrice = currentPlayer && (currentBidCr ?? currentPlayer.basePriceCr);
@@ -54,10 +64,47 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
         {currentPlayer && <span className="panel-count">Live</span>}
       </div>
 
-      {!currentPlayer ? (
-        <div className="auction-empty">
-          <p>No player is currently under the hammer.</p>
-          <p className="hint">Select a player from the Available Players panel to start.</p>
+      {!auctionStarted ? (
+        <div className="auction-empty auction-empty--start">
+          <button
+            type="button"
+            className="auction-start-btn"
+            onClick={onStartAuction}
+          >
+            <span className="auction-start-btn-icon" aria-hidden />
+            START THE AUCTION
+          </button>
+        </div>
+      ) : !currentPlayer ? (
+        <div className="auction-empty auction-empty--no-player">
+          <div className="auction-empty-content">
+            <p>No player is currently under the hammer.</p>
+            <p className="hint">Select a player from the Available Players panel to start.</p>
+            {currentSetCompleted && selectedSetName && (
+              <p className="auction-set-completed">
+                <strong>{selectedSetName}</strong> completed. We will start the next set
+                {nextSetName && (
+                  <> (<strong>{nextSetName}</strong>) in the next few minutes.</>
+                )}
+                Select the next set in Available Players when ready.
+              </p>
+            )}
+          </div>
+          <button type="button" className="auction-end-btn-inline auction-end-btn--bottom-left" onClick={() => setShowEndConfirm(true)}>
+            End auction
+          </button>
+          {showEndConfirm && (
+            <div className="auction-end-confirm-backdrop" onClick={() => setShowEndConfirm(false)}>
+              <div className="auction-end-confirm" onClick={(e) => e.stopPropagation()}>
+                <p className="auction-end-confirm-title">End auction?</p>
+                <p className="auction-end-confirm-text">Are you sure you want to end the auction? You will return to the start screen.</p>
+                <div className="auction-end-confirm-actions">
+                  <button type="button" className="auction-end-confirm-cancel" onClick={() => setShowEndConfirm(false)}>Cancel</button>
+                  <button type="button" className="auction-end-confirm-yes" onClick={() => { setShowEndConfirm(false); onEndAuction(); }}>Yes, end auction</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="auction-body">
@@ -105,62 +152,33 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
             </div>
           </div>
 
-          <div className="auction-actions">
-            <div className="auction-actions-left">
-              <div className="auction-hint">
-                Click a team to place a bid, or drag this player onto a team card to sell.
-              </div>
-              <div className="auction-buttons-row">
-                <button
-                  className="auction-button auction-button--increase"
-                  type="button"
-                  onClick={onIncreaseBid}
-                >
-                  Increase Bid
-                </button>
-                <button className="auction-clear" type="button" onClick={onClear}>
-                  Clear Live Player
-                </button>
-              </div>
-            </div>
-
-            <div className="auction-actions-right">
-              <button
-                className="auction-button auction-button--unsold"
-                type="button"
-                onClick={onUnsold}
-              >
-                Mark Unsold
-              </button>
-              <button
-                className="auction-button auction-button--sold"
-                type="button"
-                onClick={() => effectiveSellTeamId && onSellToTeam(effectiveSellTeamId)}
-                disabled={!effectiveSellTeamId || !canSelectedTeamAccept}
-              >
-                Sell to Team
-              </button>
-              <select
-                className="auction-sell-select"
-                value={effectiveSellTeamId}
-                onChange={(e) => setSelectedSellTeamId(e.target.value)}
-              >
-                {teams.map((team) => {
-                  const full = team.players.length >= team.maxPlayers;
-                  const cannotAfford = soldPrice != null && !canTeamAfford(team, soldPrice);
-                  return (
-                    <option
-                      key={team.id}
-                      value={team.id}
-                      disabled={full || cannotAfford}
-                    >
-                      {team.shortName} – {team.name} ({team.players.length}/25)
-                      {cannotAfford ? ' – purse low' : ''}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
+          <div className="auction-hint auction-hint--above">
+            Click a team to place a bid, or drag this player onto a team card to sell.
+          </div>
+          <div className="auction-actions auction-actions--row">
+            <button
+              className={`auction-action-btn auction-sell-to-team-btn ${currentBidTeamId ? 'auction-action-btn--sold' : 'auction-sell-to-team-btn--no-bid'}`}
+              type="button"
+              onClick={() => effectiveSellTeamId && onSellToTeam(effectiveSellTeamId)}
+              disabled={!currentBidTeamId || !effectiveSellTeamId || !canSelectedTeamAccept}
+              style={currentBidTeamId && selectedTeam ? {
+                background: `linear-gradient(135deg, ${selectedTeam.primaryColor} 0%, ${selectedTeam.secondaryColor} 100%)`,
+                border: 'none',
+                color: '#fff',
+              } : undefined}
+            >
+              {currentBidTeamId && selectedTeam ? `Sell to ${selectedTeam.shortName}` : 'No bid'}
+            </button>
+            <button
+              className="auction-action-btn auction-action-btn--unsold"
+              type="button"
+              onClick={onUnsold}
+            >
+              Mark Unsold
+            </button>
+            <button type="button" className="auction-end-btn-inline" onClick={() => setShowEndConfirm(true)}>
+              End auction
+            </button>
           </div>
 
           <div className="auction-teams-strip">
@@ -169,23 +187,49 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
               const isLeading = team.id === currentBidTeamId;
               const nextBidCr = currentPlayer && currentBidCr != null ? getNextBid(currentBidCr, currentPlayer.basePriceCr) : 0;
               const canAfford = currentPlayer && canTeamAfford(team, nextBidCr);
+              const isLeadingSoCannotBidAgain = isLeading;
+              const chipDisabled = !canBid || !currentPlayer || !canAfford || isLeadingSoCannotBidAgain;
               return (
                 <button
                   key={team.id}
                   type="button"
-                  className={`auction-team-chip ${
-                    canBid ? '' : 'auction-team-chip--full'
-                  } ${isLeading ? 'auction-team-chip--leading' : ''}`}
+                  className={`auction-team-chip ${!canBid ? 'auction-team-chip--full' : ''} ${isLeading ? 'auction-team-chip--leading' : ''}`}
                   style={{ backgroundColor: team.primaryColor, color: '#fff' }}
-                  onClick={() => canBid && currentPlayer && onBid(team.id)}
-                  disabled={!canBid || !currentPlayer || !canAfford}
+                  onClick={() => {
+                    if (chipDisabled) return;
+                    onSelectSellTeamId(team.id);
+                    if (!isLeadingSoCannotBidAgain) onBid(team.id);
+                  }}
+                  disabled={chipDisabled}
                 >
                   <span className="chip-name">{team.shortName}</span>
-                  <span className="chip-count">{team.players.length}/25</span>
                 </button>
               );
             })}
           </div>
+
+          {showEndConfirm && (
+            <div className="auction-end-confirm-backdrop" onClick={() => setShowEndConfirm(false)}>
+              <div className="auction-end-confirm" onClick={(e) => e.stopPropagation()}>
+                <p className="auction-end-confirm-title">End auction?</p>
+                <p className="auction-end-confirm-text">Are you sure you want to end the auction? You will return to the start screen.</p>
+                <div className="auction-end-confirm-actions">
+                  <button type="button" className="auction-end-confirm-cancel" onClick={() => setShowEndConfirm(false)}>Cancel</button>
+                  <button type="button" className="auction-end-confirm-yes" onClick={() => { setShowEndConfirm(false); onEndAuction(); }}>Yes, end auction</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {auctionStarted && toast && (
+        <div className="auction-toast-wrap">
+          <Toast
+            data={toast}
+            soldImageUrl={soldImageUrl}
+            onDismiss={onDismissToast}
+          />
         </div>
       )}
     </section>

@@ -1,5 +1,6 @@
 .unsold-panel {
   overflow: hidden;
+  min-height: 0;
 }
 
 .unsold-search {
@@ -41,8 +42,13 @@
   transition: background 0.2s;
 }
 
-.unsold-reauction-btn:hover {
+.unsold-reauction-btn:hover:not(:disabled) {
   background: rgba(255, 159, 28, 0.25);
+}
+
+.unsold-reauction-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .unsold-player-row {
@@ -63,9 +69,14 @@
   transition: background 0.2s, color 0.2s;
 }
 
-.unsold-add-back-btn:hover {
+.unsold-add-back-btn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.12);
   color: var(--text-main);
+}
+
+.unsold-add-back-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .unsold-body {
@@ -83,12 +94,26 @@
   padding-right: 4px;
 }
 
+.unsold-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
+}
+
 .unsold-list::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+}
+
+.unsold-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
 }
 
 .unsold-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+}
+
+.unsold-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
 }
 

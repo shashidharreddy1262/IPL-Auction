@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { initialPlayers } from '../data/players';
 import { initialTeams } from '../data/teams';
-import { auctionSets } from '../data/sets';
-import type { Player, TeamWithPlayers, AuctionPhase } from '../types';
+import { auctionSets, selectedSetIdToPlayerSetId } from '../data/sets';
+import type { Player, TeamWithPlayers } from '../types';
 
 import { canTeamAfford, canTeamBidForPlayer, getNextBid, movePlayerToTeam } from '../utils/auction';
 
@@ -12,24 +12,12 @@ import AuctionPanel from '../components/AuctionPanel/AuctionPanel';
 import UnsoldPlayersPanel from '../components/UnsoldPlayersPanel/UnsoldPlayersPanel';
 import TeamsPanel from '../components/TeamsPanel/TeamsPanel';
 import RulesModal from '../components/RulesModal/RulesModal';
-import Toast, { type ToastType } from '../components/Toast/Toast';
+import type { ToastData } from '../components/Toast/Toast';
 import {
   headerFooterAssets,
   headerTeamLogosLeft,
   headerTeamLogosRight,
 } from '../data/headerFooterLogos';
-
-const SOLD_MESSAGES = [
-  'Congratulations! Great buy!',
-  "You're going strong!",
-  'Your team is looking perfect!',
-  'Brilliant pick!',
-  'Well done – building a strong squad!',
-];
-const UNSOLD_MESSAGES = [
-  'Player moved to unsold. Can be re-auctioned later.',
-  'No worries – they can come back in the re-auction round.',
-];
 
 function AuctionDashboard() {
   const [availablePlayers, setAvailablePlayers] = useState<Player[]>(initialPlayers);
@@ -37,22 +25,38 @@ function AuctionDashboard() {
   const [teams, setTeams] = useState<TeamWithPlayers[]>(initialTeams);
   const [selectedSetId, setSelectedSetId] = useState<string>(auctionSets[0]?.id ?? '');
   const [showRules, setShowRules] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
-  const [auctionPhase, setAuctionPhase] = useState<AuctionPhase>('idle');
+  const [toast, setToast] = useState<ToastData | null>(null);
+  const [auctionStarted, setAuctionStarted] = useState(false);
 
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [currentBidCr, setCurrentBidCr] = useState<number | null>(null);
   const [currentBidTeamId, setCurrentBidTeamId] = useState<string | null>(null);
+  const [selectedSellTeamId, setSelectedSellTeamId] = useState<string>(initialTeams[0]?.id ?? '');
 
-  const availableInSelectedSet = useMemo(
-    () => availablePlayers.filter((p) => !selectedSetId || p.setId === selectedSetId),
-    [availablePlayers, selectedSetId]
-  );
+  const availableInSelectedSet = useMemo(() => {
+    if (!selectedSetId) return availablePlayers;
+    const playerSetId = selectedSetIdToPlayerSetId[selectedSetId] ?? selectedSetId;
+    return availablePlayers.filter((p) => p.setId === playerSetId);
+  }, [availablePlayers, selectedSetId]);
+
+  const selectedSet = auctionSets.find((s) => s.id === selectedSetId);
+  const currentSetCompleted = auctionStarted && !currentPlayer && availableInSelectedSet.length === 0 && selectedSetId;
+  const currentSetIndex = auctionSets.findIndex((s) => s.id === selectedSetId);
+  const nextSet = currentSetIndex >= 0 && currentSetIndex < auctionSets.length - 1 ? auctionSets[currentSetIndex + 1] : null;
 
   const isPlayerInAuction = useMemo(
     () => (playerId: string) => currentPlayer?.id === playerId,
     [currentPlayer]
   );
+
+  useEffect(() => {
+    if (currentBidTeamId) {
+      setSelectedSellTeamId(currentBidTeamId);
+    } else if (currentPlayer && teams.length > 0) {
+      const firstAvailable = teams.find((t) => canTeamBidForPlayer(t));
+      setSelectedSellTeamId((prev) => prev || firstAvailable?.id || teams[0]?.id || '');
+    }
+  }, [currentBidTeamId, currentPlayer, teams]);
 
   const handleStartAuctionForPlayer = (playerId: string) => {
     if (currentPlayer) return; // only one player in auction at a time
@@ -70,13 +74,7 @@ function AuctionDashboard() {
     const nextBid = getNextBid(currentBidCr, currentPlayer.basePriceCr);
     setCurrentBidCr(nextBid);
     setCurrentBidTeamId(teamId);
-  };
-
-  const handleIncreaseBid = () => {
-    if (!currentPlayer) return;
-    const effectiveBid = currentBidCr ?? currentPlayer.basePriceCr;
-    const nextBid = getNextBid(effectiveBid, currentPlayer.basePriceCr);
-    setCurrentBidCr(nextBid);
+    setSelectedSellTeamId(teamId);
   };
 
   const handleSellToTeam = (teamId: string) => {
@@ -89,12 +87,12 @@ function AuctionDashboard() {
     setTeams((prev) => movePlayerToTeam(prev, currentPlayer, teamId, soldPrice));
 
     setToast({
-      message: SOLD_MESSAGES[Math.floor(Math.random() * SOLD_MESSAGES.length)],
       type: 'sold',
+      playerName: currentPlayer.name,
+      teamName: team.name,
+      priceCr: soldPrice,
     });
-    setCurrentPlayer(null);
-    setCurrentBidCr(null);
-    setCurrentBidTeamId(null);
+    // Keep currentPlayer visible until toast is dismissed so panel stays in sync
   };
 
   const handleMarkUnsold = () => {
@@ -107,9 +105,14 @@ function AuctionDashboard() {
     ]);
 
     setToast({
-      message: UNSOLD_MESSAGES[Math.floor(Math.random() * UNSOLD_MESSAGES.length)],
       type: 'unsold',
+      playerName: currentPlayer.name,
     });
+    // Keep currentPlayer visible until toast is dismissed so panel stays in sync
+  };
+
+  const handleDismissToast = () => {
+    setToast(null);
     setCurrentPlayer(null);
     setCurrentBidCr(null);
     setCurrentBidTeamId(null);
@@ -119,49 +122,47 @@ function AuctionDashboard() {
     if (unsoldPlayers.length === 0) return;
     setAvailablePlayers((prev) => [
       ...prev,
-      ...unsoldPlayers.map((p) => ({ ...p, status: 'available' as const })),
+      ...unsoldPlayers.map((p) => ({ ...p, status: 'available' as const, setId: 'reauction' })),
     ]);
     setUnsoldPlayers([]);
+    setSelectedSetId('reauction');
   };
 
   const handleAddUnsoldBackToPool = (playerId: string) => {
     const player = unsoldPlayers.find((p) => p.id === playerId);
     if (!player) return;
     setUnsoldPlayers((prev) => prev.filter((p) => p.id !== playerId));
-    setAvailablePlayers((prev) => [...prev, { ...player, status: 'available' as const }]);
-  };
-
-  const handleClearAuction = () => {
-    setCurrentPlayer(null);
-    setCurrentBidCr(null);
-    setCurrentBidTeamId(null);
+    setAvailablePlayers((prev) => [...prev, { ...player, status: 'available' as const, setId: 'reauction' }]);
+    setSelectedSetId('reauction');
   };
 
   return (
     <div className="app-root">
       <header className="app-header">
-        <div className="app-header-logos-row">
-          <div className="app-header-teams app-header-teams--left">
-            {headerTeamLogosLeft.map((src, i) => (
-              <img key={i} src={src} alt="" className="app-header-team-logo" />
-            ))}
+        <div className="app-header-inner">
+          <div className="app-header-logos-row">
+            <div className="app-header-teams app-header-teams--left">
+              {headerTeamLogosLeft.map((src, i) => (
+                <img key={i} src={src} alt="" className="app-header-team-logo" />
+              ))}
+            </div>
+            <div className="app-header-brand">
+              <h1 className="app-title-main">🏏 IPL 2026 FANTASY AUCTION</h1>
+            </div>
+            <div className="app-header-teams app-header-teams--right">
+              {headerTeamLogosRight.map((src, i) => (
+                <img key={i} src={src} alt="" className="app-header-team-logo" />
+              ))}
+            </div>
           </div>
-          <div className="app-header-brand">
-            <h1 className="app-title-main">🏏IPL 2026 Fantasy League Auction</h1>
+          <p className="app-subtitle">
+            Build your squad in the mega auction. 1 auctioneer · 5–10 teams · ~250 players · ₹120 Cr per team.
+          </p>
+          <div className="app-header-actions">
+            <button type="button" className="app-rules-btn" onClick={() => setShowRules(true)}>
+              How to Play / Rules
+            </button>
           </div>
-          <div className="app-header-teams app-header-teams--right">
-            {headerTeamLogosRight.map((src, i) => (
-              <img key={i} src={src} alt="" className="app-header-team-logo" />
-            ))}
-          </div>
-        </div>
-        <p className="app-subtitle">
-          Build your squad in the mega auction. 1 auctioneer · 5–10 teams · ~250 players · ₹120 Cr per team.
-        </p>
-        <div className="app-header-actions">
-          <button type="button" className="app-rules-btn" onClick={() => setShowRules(true)}>
-            How to Play / Rules
-          </button>
         </div>
       </header>
 
@@ -171,8 +172,7 @@ function AuctionDashboard() {
             players={availableInSelectedSet}
             onStartAuction={handleStartAuctionForPlayer}
             isPlayerInAuction={isPlayerInAuction}
-            auctionPhase={auctionPhase}
-            onAuctionPhaseChange={setAuctionPhase}
+            auctionStarted={auctionStarted}
             selectedSetId={selectedSetId}
             onSetIdChange={setSelectedSetId}
             sets={auctionSets}
@@ -180,21 +180,32 @@ function AuctionDashboard() {
           />
 
           <AuctionPanel
+            auctionStarted={auctionStarted}
+            onStartAuction={() => setAuctionStarted(true)}
             currentPlayer={currentPlayer}
             currentBidCr={currentBidCr}
             teams={teams}
             currentBidTeamId={currentBidTeamId}
+            selectedSellTeamId={selectedSellTeamId}
+            onSelectSellTeamId={setSelectedSellTeamId}
             onBid={handleTeamBid}
-            onIncreaseBid={handleIncreaseBid}
             onSellToTeam={handleSellToTeam}
             onUnsold={handleMarkUnsold}
-            onClear={handleClearAuction}
+            onEndAuction={() => setAuctionStarted(false)}
+            selectedSetName={selectedSet?.name}
+            currentSetCompleted={!!currentSetCompleted}
+            nextSetName={nextSet?.name}
+            toast={toast}
+            onDismissToast={handleDismissToast}
+            soldImageUrl={headerFooterAssets.auctionSoldIcon}
           />
 
           <UnsoldPlayersPanel
             players={unsoldPlayers}
             onReAuctionAll={handleReAuctionUnsold}
             onAddBackToPool={handleAddUnsoldBackToPool}
+            auctionStarted={auctionStarted}
+            toastVisible={!!toast}
           />
         </section>
 
@@ -221,13 +232,6 @@ function AuctionDashboard() {
         onClose={() => setShowRules(false)}
         iplMainLogoUrl={headerFooterAssets.iplMainLogo}
       />
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onDismiss={() => setToast(null)}
-        />
-      )}
     </div>
   );
 }

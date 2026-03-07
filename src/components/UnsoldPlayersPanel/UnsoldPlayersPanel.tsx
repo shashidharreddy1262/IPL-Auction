@@ -7,12 +7,16 @@ interface UnsoldPlayersPanelProps {
   players: Player[];
   onReAuctionAll: () => void;
   onAddBackToPool: (playerId: string) => void;
+  auctionStarted: boolean;
+  toastVisible?: boolean;
 }
 
 const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
   players,
   onReAuctionAll,
   onAddBackToPool,
+  auctionStarted,
+  toastVisible = false,
 }) => {
   const [search, setSearch] = useState('');
 
@@ -32,7 +36,7 @@ const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
     <section className="panel-card unsold-panel">
       <div className="panel-header">
         <h2 className="panel-title">Unsold Players</h2>
-        <span className="panel-count">{players.length}</span>
+        {auctionStarted && <span className="panel-count">{players.length}</span>}
       </div>
       {players.length > 0 && (
         <>
@@ -44,7 +48,7 @@ const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
             onChange={(e) => setSearch(e.target.value)}
           />
           <div className="unsold-actions">
-            <button type="button" className="unsold-reauction-btn" onClick={onReAuctionAll}>
+            <button type="button" className="unsold-reauction-btn" onClick={onReAuctionAll} disabled={toastVisible}>
               Re-auction all ({players.length})
             </button>
           </div>
@@ -52,7 +56,9 @@ const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
       )}
       <div className="unsold-body">
         {players.length === 0 ? (
-          <div className="empty-state">No unsold players yet. Re-auctioned players will appear here first.</div>
+          auctionStarted ? (
+            <div className="empty-state">No unsold players yet. Re-auctioned players will appear here first.</div>
+          ) : null
         ) : filtered.length === 0 ? (
           <div className="empty-state">No players match your search.</div>
         ) : (
@@ -64,6 +70,7 @@ const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
                   type="button"
                   className="unsold-add-back-btn"
                   onClick={() => onAddBackToPool(player.id)}
+                  disabled={toastVisible}
                 >
                   Add back to pool
                 </button>

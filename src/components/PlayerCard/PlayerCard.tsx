@@ -18,35 +18,39 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   actionLabel,
   disabled,
 }) => {
+  const showFooter = actionLabel != null;
+
   return (
     <div className={`player-card ${highlight ? 'player-card--highlight' : ''}`}>
       <div className="player-main">
-        <div className="player-name-role">
+        <div className="player-left">
           <div className="player-name">{player.name}</div>
           {player.franchise && <div className="player-franchise">{player.franchise}</div>}
           <div className="player-role">{player.role}</div>
         </div>
-        <div className="player-meta">
-          {player.country} · {player.capped === true ? 'Capped' : player.capped === false ? 'Uncapped' : '–'}
+        <div className="player-right">
+          <div className="player-meta">
+            {player.country} · {player.capped === true ? 'Capped' : player.capped === false ? 'Uncapped' : '–'}
+          </div>
+          <div className="player-price">
+            <span className="label">Base</span>
+            <span className="value">{formatPriceCr(player.basePriceCr)}</span>
+          </div>
         </div>
       </div>
 
-      <div className="player-footer">
-        <div className="player-price">
-          <span className="label">Base</span>
-          <span className="value">{formatPriceCr(player.basePriceCr)}</span>
-        </div>
-        {actionLabel && onClick && (
+      {showFooter && (
+        <div className="player-footer">
           <button
             className="player-action-button"
-            onClick={onClick}
+            onClick={onClick ?? undefined}
             disabled={disabled}
             type="button"
           >
             {actionLabel}
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
