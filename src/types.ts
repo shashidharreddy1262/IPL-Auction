@@ -12,6 +12,8 @@ export interface Player {
   soldPriceCr?: number;
   soldToTeamId?: string;
   setId: string; // which auction set this player belongs to (e.g. marquee, batsmen)
+  franchise?: string; // current IPL team shortName e.g. RCB, MI
+  capped?: boolean; // capped or uncapped
 }
 
 export interface Team {
@@ -32,3 +34,5 @@ export interface AuctionSet {
   id: string;
   name: string;
 }
+
+export type AuctionPhase = 'idle' | 'running' | 'paused';

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './TeamCard.css';
 import type { TeamWithPlayers, Player } from '../../types';
 import { formatPriceCr, getRemainingPurseCr } from '../../utils/auction';
+import { getTeamLogoUrl } from '../../data/teamLogos';
 
 const DRAG_TYPE_LIVE_PLAYER = 'application/ipl-auction-live-player';
 
@@ -27,6 +28,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
   const label = currentPlayer ? 'Place Bid' : 'No Player Live';
   const canAcceptDrop = currentPlayer && canBid && onSellToTeam;
   const remainingPurseCr = getRemainingPurseCr(team);
+  const logoUrl = getTeamLogoUrl(team.shortName);
 
   const handleDragOver = (e: React.DragEvent) => {
     if (!canAcceptDrop) return;
@@ -55,20 +57,22 @@ const TeamCard: React.FC<TeamCardProps> = ({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div className="team-header">
+      <div
+        className="team-header team-header--gradient"
+        style={{
+          background: `linear-gradient(135deg, ${team.primaryColor} 0%, ${team.secondaryColor} 100%)`,
+        }}
+      >
+        {logoUrl && (
+          <img src={logoUrl} alt={team.name} className="team-logo" />
+        )}
         <div className="team-name-block">
-          <div
-            className="team-short team-short-badge"
-            style={{ backgroundColor: team.primaryColor, color: '#fff' }}
-          >
-            {team.shortName}
-          </div>
-          <div className="team-full-name">{team.name}</div>
-          <div className="team-purse">
+          <div className="team-full-name team-full-name--primary">{team.name}</div>
+          <div className="team-purse team-purse--header">
             Purse left: <strong>{formatPriceCr(remainingPurseCr)}</strong>
           </div>
         </div>
-        <div className="team-count">
+        <div className="team-count team-count--badge">
           <span>{team.players.length}</span>
           <span className="team-count-max">/ {team.maxPlayers}</span>
         </div>

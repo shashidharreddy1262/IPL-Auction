@@ -47,8 +47,16 @@
   color: var(--text-muted);
 }
 
-.player-country {
-  font-size: 0.8rem;
+.player-franchise {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-strong);
+}
+
+.player-meta {
+  font-size: 0.78rem;
   color: var(--text-muted);
 }
 

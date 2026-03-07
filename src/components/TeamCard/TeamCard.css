@@ -1,11 +1,11 @@
 .team-card {
-  padding: 9px 10px 8px;
+  padding: 0;
   border-radius: 12px;
-  background: radial-gradient(circle at top, #141b36 0, #050814 70%);
+  background: #0a0e1a;
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  overflow: hidden;
   box-shadow: var(--shadow-subtle);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
     background-color var(--transition-fast);
@@ -19,33 +19,41 @@
 
 .team-header {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  min-height: 52px;
+}
+
+.team-header--gradient {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.team-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .team-name-block {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
-}
-
-.team-short {
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-}
-
-.team-short-badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 6px;
-  margin-bottom: 4px;
+  min-width: 0;
 }
 
 .team-full-name {
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.team-full-name--primary {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
 }
 
 .team-purse {
@@ -56,6 +64,21 @@
 
 .team-purse strong {
   color: var(--accent-strong);
+}
+
+.team-purse--header {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.team-purse--header strong {
+  color: #fff;
+}
+
+.team-count--badge {
+  font-size: 0.75rem;
+  opacity: 0.95;
+  flex-shrink: 0;
 }
 
 .team-count {
@@ -72,7 +95,8 @@
   min-height: 40px;
   max-height: 132px;
   overflow-y: auto;
-  padding-right: 3px;
+  padding: 6px 10px 4px;
+  padding-right: 6px;
 }
 
 .team-body::-webkit-scrollbar {
@@ -119,7 +143,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 4px;
+  padding: 4px 10px 8px;
 }
 
 .team-bid-button {

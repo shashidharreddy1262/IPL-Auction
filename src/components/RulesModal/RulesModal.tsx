@@ -4,19 +4,25 @@ import './RulesModal.css';
 interface RulesModalProps {
   isOpen: boolean;
   onClose: () => void;
+  iplMainLogoUrl?: string;
 }
 
-const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose }) => {
+const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose, iplMainLogoUrl }) => {
   if (!isOpen) return null;
 
   return (
     <div className="rules-modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
       <div className="rules-modal" onClick={(e) => e.stopPropagation()}>
         <div className="rules-modal-header">
-          <h2>🏏 IPL Fantasy League – Official Rules & Instructions</h2>
-          <button type="button" className="rules-modal-close" onClick={onClose} aria-label="Close">
-            ×
-          </button>
+          {iplMainLogoUrl && (
+            <img src={iplMainLogoUrl} alt="IPL" className="rules-modal-ipl-logo" />
+          )}
+          <div className="rules-modal-header-row">
+            <h2>🏏 IPL Fantasy League – Official Rules & Instructions</h2>
+            <button type="button" className="rules-modal-close" onClick={onClose} aria-label="Close">
+              ×
+            </button>
+          </div>
         </div>
         <div className="rules-modal-body">
           <section>

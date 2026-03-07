@@ -2,10 +2,33 @@
   overflow: hidden;
 }
 
-.unsold-reauction-btn {
+.unsold-search {
   width: 100%;
   padding: 6px 10px;
   margin-bottom: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(10, 18, 40, 0.95);
+  color: var(--text-main);
+  font-size: 0.8rem;
+}
+
+.unsold-search::placeholder {
+  color: var(--text-muted);
+}
+
+.unsold-search:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.unsold-actions {
+  margin-bottom: 6px;
+}
+
+.unsold-reauction-btn {
+  width: 100%;
+  padding: 6px 10px;
   border-radius: 8px;
   border: 1px solid rgba(255, 159, 28, 0.4);
   background: rgba(255, 159, 28, 0.12);
@@ -20,6 +43,29 @@
 
 .unsold-reauction-btn:hover {
   background: rgba(255, 159, 28, 0.25);
+}
+
+.unsold-player-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.unsold-add-back-btn {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.2s, color 0.2s;
+}
+
+.unsold-add-back-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
 }
 
 .unsold-body {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import './UnsoldPlayersPanel.css';
 import type { Player } from '../../types';
 import PlayerCard from '../PlayerCard/PlayerCard';
@@ -6,9 +6,28 @@ import PlayerCard from '../PlayerCard/PlayerCard';
 interface UnsoldPlayersPanelProps {
   players: Player[];
   onReAuctionAll: () => void;
+  onAddBackToPool: (playerId: string) => void;
 }
 
-const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({ players, onReAuctionAll }) => {
+const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
+  players,
+  onReAuctionAll,
+  onAddBackToPool,
+}) => {
+  const [search, setSearch] = useState('');
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return players;
+    const q = search.trim().toLowerCase();
+    return players.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        (p.franchise?.toLowerCase().includes(q)) ||
+        p.role.toLowerCase().includes(q) ||
+        p.country.toLowerCase().includes(q)
+    );
+  }, [players, search]);
+
   return (
     <section className="panel-card unsold-panel">
       <div className="panel-header">
@@ -16,21 +35,39 @@ const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({ players, onReAu
         <span className="panel-count">{players.length}</span>
       </div>
       {players.length > 0 && (
-        <button
-          type="button"
-          className="unsold-reauction-btn"
-          onClick={onReAuctionAll}
-        >
-          Re-auction all ({players.length})
-        </button>
+        <>
+          <input
+            type="text"
+            className="unsold-search"
+            placeholder="Search name, team, role..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div className="unsold-actions">
+            <button type="button" className="unsold-reauction-btn" onClick={onReAuctionAll}>
+              Re-auction all ({players.length})
+            </button>
+          </div>
+        </>
       )}
       <div className="unsold-body">
         {players.length === 0 ? (
           <div className="empty-state">No unsold players yet. Re-auctioned players will appear here first.</div>
+        ) : filtered.length === 0 ? (
+          <div className="empty-state">No players match your search.</div>
         ) : (
           <div className="unsold-list">
-            {players.map((player) => (
-              <PlayerCard key={player.id} player={player} />
+            {filtered.map((player) => (
+              <div key={player.id} className="unsold-player-row">
+                <PlayerCard player={player} />
+                <button
+                  type="button"
+                  className="unsold-add-back-btn"
+                  onClick={() => onAddBackToPool(player.id)}
+                >
+                  Add back to pool
+                </button>
+              </div>
             ))}
           </div>
         )}

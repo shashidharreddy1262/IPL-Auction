@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { initialPlayers } from '../data/players';
 import { initialTeams } from '../data/teams';
 import { auctionSets } from '../data/sets';
-import type { Player, TeamWithPlayers } from '../types';
+import type { Player, TeamWithPlayers, AuctionPhase } from '../types';
 
 import { canTeamAfford, canTeamBidForPlayer, getNextBid, movePlayerToTeam } from '../utils/auction';
 
@@ -13,6 +13,11 @@ import UnsoldPlayersPanel from '../components/UnsoldPlayersPanel/UnsoldPlayersPa
 import TeamsPanel from '../components/TeamsPanel/TeamsPanel';
 import RulesModal from '../components/RulesModal/RulesModal';
 import Toast, { type ToastType } from '../components/Toast/Toast';
+import {
+  headerFooterAssets,
+  headerTeamLogosLeft,
+  headerTeamLogosRight,
+} from '../data/headerFooterLogos';
 
 const SOLD_MESSAGES = [
   'Congratulations! Great buy!',
@@ -33,6 +38,7 @@ function AuctionDashboard() {
   const [selectedSetId, setSelectedSetId] = useState<string>(auctionSets[0]?.id ?? '');
   const [showRules, setShowRules] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+  const [auctionPhase, setAuctionPhase] = useState<AuctionPhase>('idle');
 
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [currentBidCr, setCurrentBidCr] = useState<number | null>(null);
@@ -49,6 +55,7 @@ function AuctionDashboard() {
   );
 
   const handleStartAuctionForPlayer = (playerId: string) => {
+    if (currentPlayer) return; // only one player in auction at a time
     const player = availablePlayers.find((p) => p.id === playerId);
     if (!player) return;
 
@@ -117,6 +124,13 @@ function AuctionDashboard() {
     setUnsoldPlayers([]);
   };
 
+  const handleAddUnsoldBackToPool = (playerId: string) => {
+    const player = unsoldPlayers.find((p) => p.id === playerId);
+    if (!player) return;
+    setUnsoldPlayers((prev) => prev.filter((p) => p.id !== playerId));
+    setAvailablePlayers((prev) => [...prev, { ...player, status: 'available' as const }]);
+  };
+
   const handleClearAuction = () => {
     setCurrentPlayer(null);
     setCurrentBidCr(null);
@@ -126,41 +140,28 @@ function AuctionDashboard() {
   return (
     <div className="app-root">
       <header className="app-header">
-        <div className="app-header-center">
-          <h1 className="app-title-main">🔨 IPL Fantasy League Auction</h1>
-          <p className="app-subtitle">
-            Build your squad in the mega auction. 1 auctioneer · 10 teams · ~250 players · ₹120 Cr per team.
-          </p>
-          <div className="app-header-actions">
-            <button type="button" className="app-rules-btn" onClick={() => setShowRules(true)}>
-              How to Play / Rules
-            </button>
-            <div className="app-meta">
-              <div className="meta-pill">
-                <span className="meta-label">Players</span>
-                <span className="meta-value">
-                  {availablePlayers.length + unsoldPlayers.length +
-                    teams.reduce((acc, t) => acc + t.players.length, 0)}
-                </span>
-              </div>
-              <div className="meta-pill">
-                <span className="meta-label">Teams</span>
-                <span className="meta-value">{teams.length}</span>
-              </div>
-            </div>
+        <div className="app-header-logos-row">
+          <div className="app-header-teams app-header-teams--left">
+            {headerTeamLogosLeft.map((src, i) => (
+              <img key={i} src={src} alt="" className="app-header-team-logo" />
+            ))}
+          </div>
+          <div className="app-header-brand">
+            <h1 className="app-title-main">🏏IPL 2026 Fantasy League Auction</h1>
+          </div>
+          <div className="app-header-teams app-header-teams--right">
+            {headerTeamLogosRight.map((src, i) => (
+              <img key={i} src={src} alt="" className="app-header-team-logo" />
+            ))}
           </div>
         </div>
-        <div className="app-set-selector">
-          <label className="set-selector-label">Auction set</label>
-          <select
-            className="set-selector-select"
-            value={selectedSetId}
-            onChange={(e) => setSelectedSetId(e.target.value)}
-          >
-            {auctionSets.map((set) => (
-              <option key={set.id} value={set.id}>{set.name}</option>
-            ))}
-          </select>
+        <p className="app-subtitle">
+          Build your squad in the mega auction. 1 auctioneer · 5–10 teams · ~250 players · ₹120 Cr per team.
+        </p>
+        <div className="app-header-actions">
+          <button type="button" className="app-rules-btn" onClick={() => setShowRules(true)}>
+            How to Play / Rules
+          </button>
         </div>
       </header>
 
@@ -170,6 +171,12 @@ function AuctionDashboard() {
             players={availableInSelectedSet}
             onStartAuction={handleStartAuctionForPlayer}
             isPlayerInAuction={isPlayerInAuction}
+            auctionPhase={auctionPhase}
+            onAuctionPhaseChange={setAuctionPhase}
+            selectedSetId={selectedSetId}
+            onSetIdChange={setSelectedSetId}
+            sets={auctionSets}
+            hasPlayerInAuction={!!currentPlayer}
           />
 
           <AuctionPanel
@@ -187,6 +194,7 @@ function AuctionDashboard() {
           <UnsoldPlayersPanel
             players={unsoldPlayers}
             onReAuctionAll={handleReAuctionUnsold}
+            onAddBackToPool={handleAddUnsoldBackToPool}
           />
         </section>
 
@@ -202,7 +210,17 @@ function AuctionDashboard() {
         </section>
       </main>
 
-      <RulesModal isOpen={showRules} onClose={() => setShowRules(false)} />
+      <footer className="app-footer">
+        <p className="app-footer-copyright">
+          © 2026 IPL. All rights reserved.
+        </p>
+      </footer>
+
+      <RulesModal
+        isOpen={showRules}
+        onClose={() => setShowRules(false)}
+        iplMainLogoUrl={headerFooterAssets.iplMainLogo}
+      />
       {toast && (
         <Toast
           message={toast.message}

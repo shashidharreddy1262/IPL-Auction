@@ -72,19 +72,24 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
             <div className="auction-player-main">
               <div>
                 <div className="auction-player-name">{currentPlayer.name}</div>
+                {currentPlayer.franchise && (
+                  <div className="auction-player-franchise">{currentPlayer.franchise}</div>
+                )}
                 <div className="auction-player-role">{currentPlayer.role}</div>
               </div>
-              <div className="auction-player-country">{currentPlayer.country}</div>
+              <div className="auction-player-meta">
+                {currentPlayer.country} · {currentPlayer.capped === true ? 'Capped' : currentPlayer.capped === false ? 'Uncapped' : '–'}
+              </div>
             </div>
 
             <div className="auction-prices">
-              <div className="price-block">
+              <div className="price-block price-block--base">
                 <span className="label">Base Price</span>
                 <span className="value">{formatPriceCr(currentPlayer.basePriceCr)}</span>
               </div>
-              <div className="price-block">
+              <div className="price-block price-block--current-bid">
                 <span className="label">Current Bid</span>
-                <span className="value highlight">
+                <span className="value value--current-bid">
                   {currentBidCr != null ? formatPriceCr(currentBidCr) : '-'}
                 </span>
               </div>
@@ -127,36 +132,34 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
               >
                 Mark Unsold
               </button>
-              <div className="auction-sell-group">
-                <select
-                  className="auction-sell-select"
-                  value={effectiveSellTeamId}
-                  onChange={(e) => setSelectedSellTeamId(e.target.value)}
-                >
-                  {teams.map((team) => {
-                    const full = team.players.length >= team.maxPlayers;
-                    const cannotAfford = soldPrice != null && !canTeamAfford(team, soldPrice);
-                    return (
-                      <option
-                        key={team.id}
-                        value={team.id}
-                        disabled={full || cannotAfford}
-                      >
-                        {team.shortName} – {team.name} ({team.players.length}/25)
-                        {cannotAfford ? ' – purse low' : ''}
-                      </option>
-                    );
-                  })}
-                </select>
-                <button
-                  className="auction-button auction-button--sold"
-                  type="button"
-                  onClick={() => effectiveSellTeamId && onSellToTeam(effectiveSellTeamId)}
-                  disabled={!effectiveSellTeamId || !canSelectedTeamAccept}
-                >
-                  Sell to Team
-                </button>
-              </div>
+              <button
+                className="auction-button auction-button--sold"
+                type="button"
+                onClick={() => effectiveSellTeamId && onSellToTeam(effectiveSellTeamId)}
+                disabled={!effectiveSellTeamId || !canSelectedTeamAccept}
+              >
+                Sell to Team
+              </button>
+              <select
+                className="auction-sell-select"
+                value={effectiveSellTeamId}
+                onChange={(e) => setSelectedSellTeamId(e.target.value)}
+              >
+                {teams.map((team) => {
+                  const full = team.players.length >= team.maxPlayers;
+                  const cannotAfford = soldPrice != null && !canTeamAfford(team, soldPrice);
+                  return (
+                    <option
+                      key={team.id}
+                      value={team.id}
+                      disabled={full || cannotAfford}
+                    >
+                      {team.shortName} – {team.name} ({team.players.length}/25)
+                      {cannotAfford ? ' – purse low' : ''}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
           </div>
 

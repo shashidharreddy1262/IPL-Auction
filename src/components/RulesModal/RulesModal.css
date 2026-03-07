@@ -21,11 +21,25 @@
 }
 
 .rules-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rules-modal-ipl-logo {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  max-height: 64px;
+  object-fit: contain;
+  margin: 0 auto 12px;
+}
+
+.rules-modal-header-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 12px;
 }
 
 .rules-modal-header h2 {
@@ -33,6 +47,7 @@
   font-size: 1.1rem;
   color: var(--text-main);
   line-height: 1.4;
+  flex: 1;
 }
 
 .rules-modal-close {

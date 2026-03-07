@@ -23,9 +23,12 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
       <div className="player-main">
         <div className="player-name-role">
           <div className="player-name">{player.name}</div>
+          {player.franchise && <div className="player-franchise">{player.franchise}</div>}
           <div className="player-role">{player.role}</div>
         </div>
-        <div className="player-country">{player.country}</div>
+        <div className="player-meta">
+          {player.country} · {player.capped === true ? 'Capped' : player.capped === false ? 'Uncapped' : '–'}
+        </div>
       </div>
 
       <div className="player-footer">
