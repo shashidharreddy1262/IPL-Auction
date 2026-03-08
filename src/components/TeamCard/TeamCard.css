@@ -99,15 +99,6 @@
   padding-right: 6px;
 }
 
-.team-body::-webkit-scrollbar {
-  width: 5px;
-}
-
-.team-body::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-}
-
 .team-empty {
   font-size: 0.78rem;
   color: var(--text-muted);

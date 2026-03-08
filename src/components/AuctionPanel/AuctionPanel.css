@@ -76,6 +76,7 @@
   margin-left: 2px;
 }
 
+/* Toast floats at top of panel so it doesn't override team chips below */
 .auction-toast-wrap {
   margin-top: 8px;
   flex-shrink: 0;
@@ -101,26 +102,6 @@
   flex-direction: column;
   gap: 10px;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
-}
-
-.auction-body::-webkit-scrollbar {
-  width: 8px;
-}
-
-.auction-body::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-}
-
-.auction-body::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
-}
-
-.auction-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
 }
 
 .auction-player-info {

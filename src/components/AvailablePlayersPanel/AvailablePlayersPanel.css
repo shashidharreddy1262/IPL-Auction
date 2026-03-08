@@ -104,29 +104,6 @@
   padding-right: 4px;
 }
 
-.available-list {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
-}
-
-.available-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.available-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-}
-
-.available-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
-}
-
-.available-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
-}
-
 .empty-state {
   margin-top: 12px;
   font-size: 0.85rem;

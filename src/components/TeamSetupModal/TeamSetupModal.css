@@ -8,26 +8,6 @@
   z-index: 1100;
   padding: 24px 20px 20px;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
-}
-
-.team-setup-overlay::-webkit-scrollbar {
-  width: 8px;
-}
-
-.team-setup-overlay::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-}
-
-.team-setup-overlay::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
-}
-
-.team-setup-overlay::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
 }
 
 /* When embedded, overlay is inside Auctioneer panel only – does not cover header */
@@ -42,26 +22,6 @@
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.85);
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
-}
-
-.team-setup-overlay--embedded::-webkit-scrollbar {
-  width: 8px;
-}
-
-.team-setup-overlay--embedded::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-}
-
-.team-setup-overlay--embedded::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
-}
-
-.team-setup-overlay--embedded::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
 }
 
 .team-setup-modal {
@@ -116,26 +76,6 @@
 .team-setup-body {
   padding: 20px;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
-}
-
-.team-setup-body::-webkit-scrollbar {
-  width: 8px;
-}
-
-.team-setup-body::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-}
-
-.team-setup-body::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
-}
-
-.team-setup-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
 }
 
 .team-setup-intro {
@@ -271,26 +211,6 @@
   overflow-y: auto;
   margin-bottom: 16px;
   padding-right: 4px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
-}
-
-.team-setup-names-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.team-setup-names-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-}
-
-.team-setup-names-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
-}
-
-.team-setup-names-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
 }
 
 .team-setup-name-row {

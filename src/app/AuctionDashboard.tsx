@@ -161,7 +161,7 @@ function AuctionDashboard() {
               ))}
             </div>
             <div className="app-header-brand">
-              <h1 className="app-title-main">🏏 IPL 2026 FANTASY AUCTION</h1>
+              <h1 className="app-title-main">IPL 2026 FANTASY AUCTION</h1>
             </div>
             <div className="app-header-teams app-header-teams--right">
               {headerTeamLogosRight.map((src, i) => (
@@ -181,8 +181,10 @@ function AuctionDashboard() {
       </header>
 
       <main className="app-main">
-        <section className="top-panels">
-          <AvailablePlayersPanel
+        <div className="top-panels-carousel-wrap">
+          <div className="top-panels-scroll-wrap">
+          <section className="top-panels">
+            <AvailablePlayersPanel
             players={availableInSelectedSet}
             onStartAuction={handleStartAuctionForPlayer}
             isPlayerInAuction={isPlayerInAuction}
@@ -229,7 +231,9 @@ function AuctionDashboard() {
             auctionStarted={auctionStarted}
             toastVisible={!!toast}
           />
-        </section>
+          </section>
+          </div>
+        </div>
 
         <section className="teams-section">
           <TeamsPanel

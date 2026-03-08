@@ -5,29 +5,10 @@
 }
 
 .app-header {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   overflow-x: auto;
   overflow-y: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
-}
-
-.app-header::-webkit-scrollbar {
-  height: 8px;
-}
-
-.app-header::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-}
-
-.app-header::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
-}
-
-.app-header::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
+  -webkit-overflow-scrolling: touch;
 }
 
 .app-header-inner {
@@ -128,16 +109,21 @@
 
 @media (max-width: 480px) {
   .app-header-team-logo {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .app-header-logos-row {
+    gap: 3px;
   }
 
   .app-title-main {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .app-subtitle {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
+    white-space: normal;
   }
 }
 
@@ -159,14 +145,6 @@
   padding-bottom: 2px;
 }
 
-.app-subtitle::-webkit-scrollbar {
-  height: 4px;
-}
-
-.app-subtitle::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
 
 .app-header-actions {
   display: flex;
@@ -200,6 +178,16 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+/* Desktop: all three panels visible in one row */
+.top-panels-carousel-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.top-panels-scroll-wrap {
+  overflow: visible;
 }
 
 .top-panels {
@@ -265,37 +253,36 @@
 }
 
 @media (max-width: 1024px) {
-  /* Keep same 3-panel layout: horizontal scroll on small screens */
-  .app-main {
+  .app-subtitle {
+    white-space: normal;
+  }
+
+  /* Mobile: same three panels in a row, swipe with finger – no scrollbar, no arrows */
+  .top-panels-scroll-wrap {
     overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
+    overflow-y: visible;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -10px;
+    padding: 0 10px;
   }
 
-  .app-main::-webkit-scrollbar {
-    height: 10px;
-  }
-
-  .app-main::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
-  }
-
-  .app-main::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 10px;
-  }
-
-  .app-main::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.35);
+  .top-panels-scroll-wrap::-webkit-scrollbar {
+    display: none;
   }
 
   .top-panels {
     min-width: 880px;
   }
 
-  .app-subtitle {
-    white-space: normal;
+  /* Teams section: own scroll so it stays below panels */
+  .teams-section {
+    flex: 0 0 auto;
+    max-height: 50vh;
+    min-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 

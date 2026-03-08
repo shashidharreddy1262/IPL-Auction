@@ -18,8 +18,6 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   actionLabel,
   disabled,
 }) => {
-  const showFooter = actionLabel != null;
-
   return (
     <div className={`player-card ${highlight ? 'player-card--highlight' : ''}`}>
       <div className="player-main">
@@ -36,21 +34,18 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
             <span className="label">Base</span>
             <span className="value">{formatPriceCr(player.basePriceCr)}</span>
           </div>
+          {actionLabel != null && (
+            <button
+              className="player-action-button"
+              onClick={onClick ?? undefined}
+              disabled={disabled}
+              type="button"
+            >
+              {actionLabel}
+            </button>
+          )}
         </div>
       </div>
-
-      {showFooter && (
-        <div className="player-footer">
-          <button
-            className="player-action-button"
-            onClick={onClick ?? undefined}
-            disabled={disabled}
-            type="button"
-          >
-            {actionLabel}
-          </button>
-        </div>
-      )}
     </div>
   );
 };
