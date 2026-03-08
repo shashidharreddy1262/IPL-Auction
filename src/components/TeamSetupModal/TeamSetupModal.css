@@ -8,9 +8,16 @@
   z-index: 1100;
   padding: 24px 20px 20px;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* When embedded, overlay is inside Auctioneer panel only – does not cover header */
+.team-setup-overlay::-webkit-scrollbar {
+  display: none;
+}
+
+/* When embedded, overlay is inside Auctioneer panel only – dark navy, not pure black */
 .team-setup-overlay--embedded {
   position: absolute;
   inset: 0;
@@ -21,7 +28,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(5, 14, 32, 0.92);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.team-setup-overlay--embedded::-webkit-scrollbar {
+  display: none;
 }
 
 .team-setup-modal {
@@ -76,6 +90,13 @@
 .team-setup-body {
   padding: 20px;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.team-setup-body::-webkit-scrollbar {
+  display: none;
 }
 
 .team-setup-intro {
@@ -105,9 +126,15 @@
   transition: background 0.2s, border-color 0.2s;
 }
 
-.team-setup-option:hover {
+.team-setup-option:hover,
+.team-setup-option:focus {
   background: rgba(255, 255, 255, 0.08);
-  border-color: var(--accent);
+  border-color: var(--accent-blue);
+  outline: none;
+}
+
+.team-setup-option:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-blue-soft);
 }
 
 .team-setup-option-title {
@@ -150,7 +177,7 @@
 
 .team-setup-count-input:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--accent-blue);
 }
 
 .team-setup-count-input::placeholder {
@@ -177,12 +204,12 @@
 }
 
 .team-setup-btn--primary {
-  background: linear-gradient(135deg, #0d9488, #0f766e);
+  background: linear-gradient(135deg, var(--accent-blue), #3d6ba8);
   color: #fff;
 }
 
 .team-setup-btn--primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  background: linear-gradient(135deg, var(--accent-blue-strong), var(--accent-blue));
 }
 
 .team-setup-btn:disabled {
@@ -238,7 +265,7 @@
 
 .team-setup-name-input:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--accent-blue);
 }
 
 .team-setup-name-input::placeholder {

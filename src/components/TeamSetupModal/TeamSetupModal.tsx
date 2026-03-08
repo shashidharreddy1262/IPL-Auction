@@ -92,11 +92,14 @@ const TeamSetupModal: React.FC<TeamSetupModalProps> = ({
       <div className="team-setup-modal" onClick={(e) => e.stopPropagation()}>
         <div className="team-setup-header">
           <h2 id="team-setup-title">Select teams before starting the auction</h2>
-          {step === 'choose' && (
-            <button type="button" className="team-setup-close" onClick={onClose} aria-label="Close">
-              ×
-            </button>
-          )}
+          <button
+            type="button"
+            className="team-setup-close"
+            onClick={() => (step === 'choose' ? onClose() : handleBack())}
+            aria-label={step === 'choose' ? 'Close' : 'Back'}
+          >
+            ×
+          </button>
         </div>
 
         <div className="team-setup-body">

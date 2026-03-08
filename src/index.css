@@ -4,6 +4,10 @@
   --accent: #ff9f1c;
   --accent-soft: rgba(255, 159, 28, 0.15);
   --accent-strong: #ffbf69;
+  /* Blue/navy UI accent for header buttons and modals – in sync with app theme */
+  --accent-blue: #4f7cba;
+  --accent-blue-soft: rgba(79, 124, 186, 0.2);
+  --accent-blue-strong: #6b9bd1;
   --border-subtle: rgba(255, 255, 255, 0.08);
   --text-main: #f7f7ff;
   --text-muted: #a0a8d2;
