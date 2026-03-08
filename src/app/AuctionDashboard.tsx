@@ -100,10 +100,10 @@ function AuctionDashboard() {
     if (!currentPlayer) return;
 
     setAvailablePlayers((prev) => prev.filter((p) => p.id !== currentPlayer.id));
-    setUnsoldPlayers((prev) => [
-      ...prev,
-      { ...currentPlayer, status: 'unsold' },
-    ]);
+    setUnsoldPlayers((prev) => {
+      if (prev.some((p) => p.id === currentPlayer.id)) return prev;
+      return [...prev, { ...currentPlayer, status: 'unsold' }];
+    });
 
     setToast({
       type: 'unsold',
