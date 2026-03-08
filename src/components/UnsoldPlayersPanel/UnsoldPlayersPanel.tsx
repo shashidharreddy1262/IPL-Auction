@@ -57,7 +57,7 @@ const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
       <div className="unsold-body">
         {players.length === 0 ? (
           auctionStarted ? (
-            <div className="empty-state">No unsold players yet. Re-auctioned players will appear here first.</div>
+            <div className="empty-state">No unsold players yet.</div>
           ) : null
         ) : filtered.length === 0 ? (
           <div className="empty-state">No players match your search.</div>

@@ -1,0 +1,365 @@
+.team-setup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1100;
+  padding: 24px 20px 20px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
+}
+
+.team-setup-overlay::-webkit-scrollbar {
+  width: 8px;
+}
+
+.team-setup-overlay::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+.team-setup-overlay::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+}
+
+.team-setup-overlay::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* When embedded, overlay is inside Auctioneer panel only – does not cover header */
+.team-setup-overlay--embedded {
+  position: absolute;
+  inset: 0;
+  padding: 12px;
+  z-index: 20;
+  border-radius: var(--card-radius, 14px);
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
+}
+
+.team-setup-overlay--embedded::-webkit-scrollbar {
+  width: 8px;
+}
+
+.team-setup-overlay--embedded::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+.team-setup-overlay--embedded::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+}
+
+.team-setup-overlay--embedded::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.team-setup-modal {
+  background: linear-gradient(180deg, #0f1729 0%, #050814 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  max-width: 480px;
+  width: 100%;
+  max-height: min(75vh, 520px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+.team-setup-overlay--embedded .team-setup-modal {
+  max-height: 100%;
+}
+
+.team-setup-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.team-setup-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  line-height: 1.35;
+  flex: 1;
+}
+
+.team-setup-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.team-setup-close:hover {
+  color: var(--text-main);
+}
+
+.team-setup-body {
+  padding: 20px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
+}
+
+.team-setup-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.team-setup-body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+.team-setup-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+}
+
+.team-setup-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.team-setup-intro {
+  margin: 0 0 16px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.team-setup-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.team-setup-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.team-setup-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent);
+}
+
+.team-setup-option-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.team-setup-option-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.team-setup-count-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.team-setup-count-input {
+  width: 72px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: #0c1224;
+  color: var(--text-main);
+  font-size: 1rem;
+  appearance: none;
+  -moz-appearance: textfield;
+}
+
+.team-setup-count-input::-webkit-outer-spin-button,
+.team-setup-count-input::-webkit-inner-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  background: transparent;
+}
+
+.team-setup-count-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.team-setup-count-input::placeholder {
+  color: var(--text-muted);
+}
+
+.team-setup-nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.team-setup-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.team-setup-btn--primary {
+  background: linear-gradient(135deg, #0d9488, #0f766e);
+  color: #fff;
+}
+
+.team-setup-btn--primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+}
+
+.team-setup-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.team-setup-back {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.team-setup-back:hover {
+  color: var(--text-main);
+}
+
+.team-setup-names-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.06);
+}
+
+.team-setup-names-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.team-setup-names-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+.team-setup-names-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+}
+
+.team-setup-names-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.team-setup-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.team-setup-name-label {
+  flex: 0 0 70px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.team-setup-name-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: #0c1224;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.team-setup-name-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.team-setup-name-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.team-setup-name-input::-webkit-input-placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.team-setup-name-input::-moz-placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.team-setup-count-input:-webkit-autofill,
+.team-setup-count-input:-webkit-autofill:hover,
+.team-setup-count-input:-webkit-autofill:focus,
+.team-setup-name-input:-webkit-autofill,
+.team-setup-name-input:-webkit-autofill:hover,
+.team-setup-name-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-main);
+  -webkit-box-shadow: 0 0 0 1000px #0c1224 inset;
+  box-shadow: 0 0 0 1000px #0c1224 inset;
+}
+
+.team-setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.team-setup-actions .team-setup-back {
+  order: 1;
+}
+
+.team-setup-actions .team-setup-btn {
+  order: 2;
+  margin-left: auto;
+}

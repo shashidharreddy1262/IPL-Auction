@@ -25,6 +25,7 @@ function AuctionDashboard() {
   const [teams, setTeams] = useState<TeamWithPlayers[]>(initialTeams);
   const [selectedSetId, setSelectedSetId] = useState<string>(auctionSets[0]?.id ?? '');
   const [showRules, setShowRules] = useState(false);
+  const [showTeamSetup, setShowTeamSetup] = useState(false);
   const [toast, setToast] = useState<ToastData | null>(null);
   const [auctionStarted, setAuctionStarted] = useState(false);
 
@@ -136,6 +137,19 @@ function AuctionDashboard() {
     setSelectedSetId('reauction');
   };
 
+  const handleEndAuction = () => {
+    setAuctionStarted(false);
+    setAvailablePlayers(initialPlayers.map((p) => ({ ...p, status: 'available' as const })));
+    setUnsoldPlayers([]);
+    setTeams(initialTeams);
+    setSelectedSetId(auctionSets[0]?.id ?? '');
+    setToast(null);
+    setCurrentPlayer(null);
+    setCurrentBidCr(null);
+    setCurrentBidTeamId(null);
+    setSelectedSellTeamId(initialTeams[0]?.id ?? '');
+  };
+
   return (
     <div className="app-root">
       <header className="app-header">
@@ -181,7 +195,15 @@ function AuctionDashboard() {
 
           <AuctionPanel
             auctionStarted={auctionStarted}
-            onStartAuction={() => setAuctionStarted(true)}
+            onStartAuction={() => setShowTeamSetup(true)}
+            showTeamSetup={showTeamSetup}
+            onConfirmTeams={(teams) => {
+              setTeams(teams);
+              setSelectedSellTeamId(teams[0]?.id ?? '');
+              setAuctionStarted(true);
+              setShowTeamSetup(false);
+            }}
+            onCloseTeamSetup={() => setShowTeamSetup(false)}
             currentPlayer={currentPlayer}
             currentBidCr={currentBidCr}
             teams={teams}
@@ -191,7 +213,7 @@ function AuctionDashboard() {
             onBid={handleTeamBid}
             onSellToTeam={handleSellToTeam}
             onUnsold={handleMarkUnsold}
-            onEndAuction={() => setAuctionStarted(false)}
+            onEndAuction={handleEndAuction}
             selectedSetName={selectedSet?.name}
             currentSetCompleted={!!currentSetCompleted}
             nextSetName={nextSet?.name}
@@ -212,6 +234,7 @@ function AuctionDashboard() {
         <section className="teams-section">
           <TeamsPanel
             teams={teams}
+            auctionStarted={auctionStarted}
             currentPlayer={currentPlayer}
             currentBidCr={currentBidCr}
             currentBidTeamId={currentBidTeamId}

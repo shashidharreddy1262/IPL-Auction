@@ -6,6 +6,7 @@ import TeamCard from '../TeamCard/TeamCard';
 
 interface TeamsPanelProps {
   teams: TeamWithPlayers[];
+  auctionStarted: boolean;
   currentPlayer: Player | null;
   currentBidCr: number | null;
   currentBidTeamId: string | null;
@@ -15,6 +16,7 @@ interface TeamsPanelProps {
 
 const TeamsPanel: React.FC<TeamsPanelProps> = ({
   teams,
+  auctionStarted,
   currentPlayer,
   currentBidCr,
   currentBidTeamId,
@@ -25,9 +27,14 @@ const TeamsPanel: React.FC<TeamsPanelProps> = ({
     <section className="panel-card teams-panel">
       <div className="panel-header">
         <h2 className="panel-title">Teams</h2>
-        <span className="panel-count">{teams.length}</span>
+        {auctionStarted && <span className="panel-count">{teams.length}</span>}
       </div>
 
+      {!auctionStarted ? (
+        <div className="teams-panel-empty">
+          <p className="teams-panel-empty-text">Start the auction and select default or custom teams to see them here.</p>
+        </div>
+      ) : (
       <div className="teams-grid">
         {teams.map((team) => {
           const isLeading = team.id === currentBidTeamId;
@@ -45,8 +52,9 @@ const TeamsPanel: React.FC<TeamsPanelProps> = ({
           );
         })}
       </div>
+      )}
 
-      {currentPlayer && (
+      {auctionStarted && currentPlayer && (
         <div className="teams-footer-info">
           <span className="label">Live Player</span>
           <span className="value">

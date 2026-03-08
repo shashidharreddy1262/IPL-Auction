@@ -2,6 +2,18 @@
   margin-top: 4px;
 }
 
+.teams-panel-empty {
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.teams-panel-empty-text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 .teams-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));

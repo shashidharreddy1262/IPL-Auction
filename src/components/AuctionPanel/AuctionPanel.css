@@ -284,9 +284,23 @@
   color: var(--danger);
 }
 
-.auction-action-btn--unsold:hover {
+.auction-action-btn--unsold:hover:not(:disabled) {
   background: rgba(255, 77, 106, 0.25);
   transform: translateY(-0.5px);
+}
+
+/* Mark Unsold disabled when a team has already bid */
+.auction-action-btn--unsold-disabled,
+.auction-action-btn--unsold:disabled {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  opacity: 0.7;
+  cursor: default !important;
+}
+
+.auction-action-btn--unsold:disabled:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: none;
 }
 
 .auction-action-btn--sold {

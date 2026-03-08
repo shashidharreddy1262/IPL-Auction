@@ -4,10 +4,14 @@ import type { Player, TeamWithPlayers } from '../../types';
 import { canTeamAfford, canTeamBidForPlayer, formatPriceCr, getNextBid } from '../../utils/auction';
 import Toast from '../Toast/Toast';
 import type { ToastData } from '../Toast/Toast';
+import TeamSetupModal from '../TeamSetupModal/TeamSetupModal';
 
 interface AuctionPanelProps {
   auctionStarted: boolean;
   onStartAuction: () => void;
+  showTeamSetup?: boolean;
+  onConfirmTeams?: (teams: TeamWithPlayers[]) => void;
+  onCloseTeamSetup?: () => void;
   currentPlayer: Player | null;
   currentBidCr: number | null;
   teams: TeamWithPlayers[];
@@ -31,6 +35,9 @@ const DRAG_TYPE_LIVE_PLAYER = 'application/ipl-auction-live-player';
 const AuctionPanel: React.FC<AuctionPanelProps> = ({
   auctionStarted,
   onStartAuction,
+  showTeamSetup = false,
+  onConfirmTeams,
+  onCloseTeamSetup,
   currentPlayer,
   currentBidCr,
   teams,
@@ -59,6 +66,14 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
 
   return (
     <section className="panel-card auction-panel">
+      {showTeamSetup && onConfirmTeams && onCloseTeamSetup && (
+        <TeamSetupModal
+          isOpen
+          onClose={onCloseTeamSetup}
+          onConfirm={onConfirmTeams}
+          embedded
+        />
+      )}
       <div className="panel-header">
         <h2 className="panel-title">Auctioneer</h2>
         {currentPlayer && <span className="panel-count">Live</span>}
@@ -170,9 +185,11 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
               {currentBidTeamId && selectedTeam ? `Sell to ${selectedTeam.shortName}` : 'No bid'}
             </button>
             <button
-              className="auction-action-btn auction-action-btn--unsold"
+              className={`auction-action-btn auction-action-btn--unsold ${currentBidTeamId ? 'auction-action-btn--unsold-disabled' : ''}`}
               type="button"
               onClick={onUnsold}
+              disabled={!!currentBidTeamId}
+              title={currentBidTeamId ? 'A team has already bid – sell to that team instead' : undefined}
             >
               Mark Unsold
             </button>
