@@ -276,13 +276,20 @@
     min-width: 880px;
   }
 
-  /* Teams section: own scroll so it stays below panels */
+  /* Teams section: own scroll so it stays below panels – no visible scrollbar */
   .teams-section {
     flex: 0 0 auto;
     max-height: 50vh;
     min-height: 200px;
     overflow-y: auto;
     overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .teams-section::-webkit-scrollbar {
+    display: none;
   }
 }
 

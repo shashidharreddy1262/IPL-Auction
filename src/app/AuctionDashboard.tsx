@@ -170,7 +170,7 @@ function AuctionDashboard() {
             </div>
           </div>
           <p className="app-subtitle">
-            Build your squad in the mega auction. 1 auctioneer · 5–10 teams · ~250 players · ₹120 Cr per team.
+            Build your squad in the mega auction. 1 auctioneer · 5–30 teams · 249 players · ₹120 Cr per team.
           </p>
           <div className="app-header-actions">
             <button type="button" className="app-rules-btn" onClick={() => setShowRules(true)}>

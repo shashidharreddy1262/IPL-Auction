@@ -102,6 +102,13 @@
   max-height: 360px;
   overflow-y: auto;
   padding-right: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.available-list::-webkit-scrollbar {
+  display: none;
 }
 
 .empty-state {
