@@ -495,11 +495,6 @@ function AuctionDashboard({ roomId, role, userName }: AuctionDashboardProps) {
 
   const selectedSet = auctionSetsFromData.find((s) => s.id === selectedSetId);
   const currentSetCompleted = auctionStarted && !currentPlayer && availableInSelectedSet.length === 0 && selectedSetId;
-  const currentSetIndex = auctionSetsFromData.findIndex((s) => s.id === selectedSetId);
-  const nextSet =
-    currentSetIndex >= 0 && currentSetIndex < auctionSetsFromData.length - 1
-      ? auctionSetsFromData[currentSetIndex + 1]
-      : null;
 
   const isPlayerInAuction = useMemo(
     () => (playerId: string) => currentPlayer?.id === playerId,
