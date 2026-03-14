@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './AuctionPanel.css';
 import type { Player, TeamWithPlayers } from '../../types';
-import { canTeamAfford, canTeamBidForPlayer, formatPriceCr, getNextBid } from '../../utils/auction';
+import { formatPriceCr, getNextBid } from '../../utils/auction';
 import Toast from '../Toast/Toast';
 import type { ToastData } from '../Toast/Toast';
 
@@ -14,14 +14,12 @@ interface AuctionPanelProps {
   teams: TeamWithPlayers[];
   currentBidTeamId: string | null;
   selectedSellTeamId: string;
-  onSelectSellTeamId: (teamId: string) => void;
   onBid: (teamId: string) => void;
   onSellToTeam: (teamId: string) => void;
   onUnsold: () => void;
   onEndAuction: () => void;
   selectedSetName?: string;
   currentSetCompleted: boolean;
-  nextSetName?: string;
   toast: ToastData | null;
   onDismissToast: () => void;
   soldImageUrl?: string;
@@ -43,14 +41,12 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
   teams,
   currentBidTeamId,
   selectedSellTeamId,
-  onSelectSellTeamId,
   onBid,
   onSellToTeam,
   onUnsold,
   onEndAuction,
   selectedSetName,
   currentSetCompleted,
-  nextSetName,
   toast,
   onDismissToast,
   soldImageUrl,

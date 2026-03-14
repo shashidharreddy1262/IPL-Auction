@@ -144,8 +144,8 @@ function AuctionDashboard({ roomId, role, userName }: AuctionDashboardProps) {
     roomId?: string;
     auctionStatus: BackendAuctionStatus;
     currentPlayer?: Player | null;
-    currentBid?: number | null;
-    current_bid?: number | null;
+    currentBid?: number | string | null;
+    current_bid?: number | string | null;
     highestBidderTeamId?: string | null;
     highest_bidder_team_id?: string | null;
     availablePlayers?: Player[];
@@ -409,8 +409,8 @@ function AuctionDashboard({ roomId, role, userName }: AuctionDashboardProps) {
       client.subscribe(`/topic/room/${roomId}/bid`, (message: IMessage) => {
         try {
           const body = JSON.parse(message.body) as {
-            currentBid?: number | null;
-            current_bid?: number | null;
+            currentBid?: number | string | null;
+            current_bid?: number | string | null;
             highestBidderTeamId?: string | null;
             highest_bidder_team_id?: string | null;
             teamId?: string | null;
@@ -700,14 +700,12 @@ function AuctionDashboard({ roomId, role, userName }: AuctionDashboardProps) {
             teams={teams}
             currentBidTeamId={currentBidTeamId}
             selectedSellTeamId={selectedSellTeamId}
-            onSelectSellTeamId={setSelectedSellTeamId}
             onBid={handleTeamBid}
             onSellToTeam={handleSellToTeam}
             onUnsold={handleMarkUnsold}
             onEndAuction={handleEndAuction}
             selectedSetName={selectedSet?.name}
             currentSetCompleted={!!currentSetCompleted}
-            nextSetName={nextSet?.name}
             toast={toast}
             onDismissToast={handleDismissToast}
             soldImageUrl={headerFooterAssets.auctionSoldIcon}
