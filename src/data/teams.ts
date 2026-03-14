@@ -6,7 +6,7 @@ export const MIN_CUSTOM_TEAMS = 5;
 export const MAX_CUSTOM_TEAMS = 30;
 
 // Color palette for custom teams (primary, secondary) – used when creating 5–30 custom teams
-const CUSTOM_TEAM_COLORS: [string, string][] = [
+export const CUSTOM_TEAM_COLORS: [string, string][] = [
   ['#004ba0', '#a8b2c0'],
   ['#c9a227', '#8b6914'],
   ['#da121a', '#1a1a2e'],

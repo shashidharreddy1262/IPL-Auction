@@ -1,0 +1,129 @@
+.results-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.results-loading,
+.results-error,
+.results-empty {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.9);
+  font-size: 0.9rem;
+}
+
+.results-error {
+  border: 1px solid rgba(248, 113, 113, 0.6);
+  color: #fecaca;
+}
+
+.results-teams-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 4px;
+}
+
+.results-team-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.95);
+  color: var(--text-main);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.results-team-chip--active {
+  background: linear-gradient(135deg, #4f46e5, #2563eb);
+  border-color: transparent;
+  transform: translateY(-1px);
+}
+
+.results-team-chip-index {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.results-team-chip-name {
+  font-weight: 600;
+}
+
+.results-panel {
+  padding: 12px 12px 14px;
+  border-radius: 16px;
+  background: radial-gradient(circle at top left, #111827 0%, #020617 55%);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow: var(--shadow-subtle);
+}
+
+.results-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.results-summary-item {
+  min-width: 120px;
+}
+
+.results-summary-item .label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.results-summary-item .value {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.results-players {
+  margin-top: 6px;
+}
+
+.results-players-header {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1.2fr 1.2fr;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+}
+
+.results-player-row {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1.2fr 1.2fr;
+  font-size: 0.8rem;
+  padding: 3px 0;
+}
+
+.results-player-row:nth-child(odd) {
+  background: rgba(15, 23, 42, 0.65);
+}
+
+.results-player-row:nth-child(even) {
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.results-player-row .col-name {
+  padding-left: 4px;
+}
+
+.results-player-row .col-final {
+  font-weight: 600;
+}
+
+.results-players-empty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+

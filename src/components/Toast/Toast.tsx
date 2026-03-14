@@ -14,11 +14,18 @@ export interface ToastData {
 interface ToastProps {
   data: ToastData;
   soldImageUrl?: string;
+  unsoldImageUrl?: string;
   onDismiss: () => void;
   duration?: number;
 }
 
-const Toast: React.FC<ToastProps> = ({ data, soldImageUrl, onDismiss, duration = 2000 }) => {
+const Toast: React.FC<ToastProps> = ({
+  data,
+  soldImageUrl,
+  unsoldImageUrl,
+  onDismiss,
+  duration = 2000,
+}) => {
   useEffect(() => {
     const t = setTimeout(onDismiss, duration);
     return () => clearTimeout(t);
@@ -27,7 +34,10 @@ const Toast: React.FC<ToastProps> = ({ data, soldImageUrl, onDismiss, duration =
   return (
     <div className={`toast toast--inline toast--${data.type}`} role="alert">
       {data.type === 'sold' && soldImageUrl && (
-        <img src={soldImageUrl} alt="" className="toast-sold-icon" />
+        <img src={soldImageUrl} alt="" className="toast-icon" />
+      )}
+      {data.type === 'unsold' && unsoldImageUrl && (
+        <img src={unsoldImageUrl} alt="" className="toast-icon" />
       )}
       <div className="toast-content">
         {data.type === 'sold' && (

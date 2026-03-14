@@ -4,14 +4,11 @@ import type { Player, TeamWithPlayers } from '../../types';
 import { canTeamAfford, canTeamBidForPlayer, formatPriceCr, getNextBid } from '../../utils/auction';
 import Toast from '../Toast/Toast';
 import type { ToastData } from '../Toast/Toast';
-import TeamSetupModal from '../TeamSetupModal/TeamSetupModal';
 
 interface AuctionPanelProps {
   auctionStarted: boolean;
+  roomStateLoaded?: boolean;
   onStartAuction: () => void;
-  showTeamSetup?: boolean;
-  onConfirmTeams?: (teams: TeamWithPlayers[]) => void;
-  onCloseTeamSetup?: () => void;
   currentPlayer: Player | null;
   currentBidCr: number | null;
   teams: TeamWithPlayers[];
@@ -28,16 +25,19 @@ interface AuctionPanelProps {
   toast: ToastData | null;
   onDismissToast: () => void;
   soldImageUrl?: string;
+  unsoldImageUrl?: string;
+  isAuctioneer?: boolean;
+  connectionError?: string | null;
+  role?: 'AUCTIONEER' | 'PARTICIPANT';
+  myTeamId?: string | null;
 }
 
 const DRAG_TYPE_LIVE_PLAYER = 'application/ipl-auction-live-player';
 
 const AuctionPanel: React.FC<AuctionPanelProps> = ({
   auctionStarted,
+  roomStateLoaded = true,
   onStartAuction,
-  showTeamSetup = false,
-  onConfirmTeams,
-  onCloseTeamSetup,
   currentPlayer,
   currentBidCr,
   teams,
@@ -54,26 +54,61 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
   toast,
   onDismissToast,
   soldImageUrl,
+  unsoldImageUrl,
+  isAuctioneer = true,
+  connectionError = null,
+  role = 'AUCTIONEER',
+  myTeamId = null,
 }) => {
   const [showEndConfirm, setShowEndConfirm] = useState(false);
-  const leadingTeam = teams.find((t) => t.id === currentBidTeamId) || null;
-  const effectiveSellTeamId = selectedSellTeamId || currentBidTeamId || (teams[0]?.id ?? '');
-  const selectedTeam = teams.find((t) => t.id === effectiveSellTeamId);
+  const safeTeams = Array.isArray(teams) ? teams : [];
+  const currentBidder = currentBidTeamId != null ? String(currentBidTeamId).trim().toLowerCase() : '';
+  const selectedBidder = selectedSellTeamId != null ? String(selectedSellTeamId).trim().toLowerCase() : '';
+  const leadingTeam =
+    safeTeams.find(
+      (t) =>
+        String(t.id) === String(currentBidTeamId) ||
+        (currentBidder && t.name?.trim().toLowerCase() === currentBidder)
+    ) || null;
+  const selectedTeam =
+    safeTeams.find(
+      (t) =>
+        String(t.id) === String(selectedSellTeamId) ||
+        (selectedBidder && t.name?.trim().toLowerCase() === selectedBidder)
+    ) ||
+    leadingTeam ||
+    null;
+  const effectiveSellTeamId = selectedTeam?.id ?? currentBidTeamId ?? safeTeams[0]?.id ?? '';
   const soldPrice = currentPlayer && (currentBidCr ?? currentPlayer.basePriceCr);
-  const canSelectedTeamAccept = selectedTeam
-    ? canTeamBidForPlayer(selectedTeam) && (soldPrice != null && canTeamAfford(selectedTeam, soldPrice))
-    : false;
+  // Frontend no longer blocks sell based on purse/squad; backend is source of truth.
+  const canSelectedTeamAccept = !!currentBidTeamId && !!selectedTeam && !!soldPrice;
+
+  const leadingTeamLabel = leadingTeam
+    ? `${leadingTeam.shortName || leadingTeam.name || 'Team'}`
+    : null;
+
+  const isParticipantView = role === 'PARTICIPANT';
+  const isOwnTeamLeading =
+    isParticipantView &&
+    myTeamId != null &&
+    currentBidTeamId != null &&
+    String(currentBidTeamId) === String(myTeamId);
+  const participantCanBid =
+    isParticipantView && !!myTeamId && !!currentPlayer && !isOwnTeamLeading;
+
+  // If no leading team yet, ignore currentBidCr (backend sets it to basePriceCr on select)
+  // so first bid = basePriceCr; otherwise increment from currentBidCr
+  const participantNextBidCr =
+    currentPlayer && participantCanBid
+      ? getNextBid(currentBidTeamId ? currentBidCr : null, currentPlayer.basePriceCr)
+      : null;
+  const sellButtonLabel =
+    currentBidTeamId && selectedTeam
+      ? `Sell to ${selectedTeam.shortName || selectedTeam.name || 'team'}`
+      : 'No bid';
 
   return (
     <section className="panel-card auction-panel">
-      {showTeamSetup && onConfirmTeams && onCloseTeamSetup && (
-        <TeamSetupModal
-          isOpen
-          onClose={onCloseTeamSetup}
-          onConfirm={onConfirmTeams}
-          embedded
-        />
-      )}
       <div className="panel-header">
         <h2 className="panel-title">Auctioneer</h2>
         {currentPlayer && <span className="panel-count">Live</span>}
@@ -81,44 +116,81 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
 
       {!auctionStarted ? (
         <div className="auction-empty auction-empty--start">
-          <button
-            type="button"
-            className="auction-start-btn"
-            onClick={onStartAuction}
-          >
-            <span className="auction-start-btn-icon" aria-hidden />
-            START THE AUCTION
-          </button>
+          {!roomStateLoaded ? (
+            <p className="hint">Connecting to auction room…</p>
+          ) : isAuctioneer ? (
+            <button
+              type="button"
+              className="auction-start-btn"
+              onClick={onStartAuction}
+            >
+              <span className="auction-start-btn-icon" aria-hidden />
+              START THE AUCTION
+            </button>
+          ) : (
+            <p className="hint">Waiting for the auctioneer to start the auction…</p>
+          )}
         </div>
       ) : !currentPlayer ? (
         <div className="auction-empty auction-empty--no-player">
           <div className="auction-empty-content">
-            <p>No player is currently under the hammer.</p>
-            <p className="hint">Select a player from the Available Players panel to start.</p>
+            {isAuctioneer && (
+              <>
+                <p>No player is currently under the hammer.</p>
+                <p className="hint">Select a player from the Available Players panel to start.</p>
+              </>
+            )}
+            {!isAuctioneer && !currentSetCompleted && (
+              <>
+                <p>Waiting for the auctioneer to bring the next player under the hammer.</p>
+                <p className="hint">Please wait while the next player is sent to the auction panel.</p>
+              </>
+            )}
             {currentSetCompleted && selectedSetName && (
               <p className="auction-set-completed">
-                <strong>{selectedSetName}</strong> completed. We will start the next set
-                {nextSetName && (
-                  <> (<strong>{nextSetName}</strong>) in the next few minutes.</>
-                )}
-                Select the next set in Available Players when ready.
+                <strong>{selectedSetName}</strong> completed. We will start the next set in a few minutes.
               </p>
             )}
           </div>
-          <button type="button" className="auction-end-btn-inline auction-end-btn--bottom-left" onClick={() => setShowEndConfirm(true)}>
-            End auction
-          </button>
-          {showEndConfirm && (
-            <div className="auction-end-confirm-backdrop" onClick={() => setShowEndConfirm(false)}>
-              <div className="auction-end-confirm" onClick={(e) => e.stopPropagation()}>
-                <p className="auction-end-confirm-title">End auction?</p>
-                <p className="auction-end-confirm-text">Are you sure you want to end the auction? You will return to the start screen.</p>
-                <div className="auction-end-confirm-actions">
-                  <button type="button" className="auction-end-confirm-cancel" onClick={() => setShowEndConfirm(false)}>Cancel</button>
-                  <button type="button" className="auction-end-confirm-yes" onClick={() => { setShowEndConfirm(false); onEndAuction(); }}>Yes, end auction</button>
+          {isAuctioneer && (
+            <>
+              <button
+                type="button"
+                className="auction-end-btn-inline auction-end-btn--bottom-left"
+                onClick={() => setShowEndConfirm(true)}
+              >
+                End auction
+              </button>
+              {showEndConfirm && (
+                <div className="auction-end-confirm-backdrop" onClick={() => setShowEndConfirm(false)}>
+                  <div className="auction-end-confirm" onClick={(e) => e.stopPropagation()}>
+                    <p className="auction-end-confirm-title">End auction?</p>
+                    <p className="auction-end-confirm-text">
+                      Are you sure you want to end the auction? You will return to the start screen.
+                    </p>
+                    <div className="auction-end-confirm-actions">
+                      <button
+                        type="button"
+                        className="auction-end-confirm-cancel"
+                        onClick={() => setShowEndConfirm(false)}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className="auction-end-confirm-yes"
+                        onClick={() => {
+                          setShowEndConfirm(false);
+                          onEndAuction();
+                        }}
+                      >
+                        Yes, end auction
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              )}
+            </>
           )}
         </div>
       ) : (
@@ -152,7 +224,7 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
               <div className="price-block price-block--current-bid">
                 <span className="label">Current Bid</span>
                 <span className="value value--current-bid">
-                  {currentBidCr != null ? formatPriceCr(currentBidCr) : '-'}
+                  {formatPriceCr(currentBidCr ?? currentPlayer.basePriceCr)}
                 </span>
               </div>
             </div>
@@ -160,70 +232,79 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
             <div className="auction-leading">
               <span className="label">Leading Team</span>
               <span className="value">
-                {leadingTeam
-                  ? `${leadingTeam.shortName} (${leadingTeam.name})`
-                  : 'No bids yet'}
+                {leadingTeamLabel ? leadingTeamLabel : 'No bids yet'}
               </span>
             </div>
           </div>
 
-          <div className="auction-hint auction-hint--above">
-            Click a team to place a bid, or drag this player onto a team card to sell.
-          </div>
-          <div className="auction-actions auction-actions--row">
-            <button
-              className={`auction-action-btn auction-sell-to-team-btn ${currentBidTeamId ? 'auction-action-btn--sold' : 'auction-sell-to-team-btn--no-bid'}`}
-              type="button"
-              onClick={() => effectiveSellTeamId && onSellToTeam(effectiveSellTeamId)}
-              disabled={!currentBidTeamId || !effectiveSellTeamId || !canSelectedTeamAccept}
-              style={currentBidTeamId && selectedTeam ? {
-                background: `linear-gradient(135deg, ${selectedTeam.primaryColor} 0%, ${selectedTeam.secondaryColor} 100%)`,
-                border: 'none',
-                color: '#fff',
-              } : undefined}
-            >
-              {currentBidTeamId && selectedTeam ? `Sell to ${selectedTeam.shortName}` : 'No bid'}
-            </button>
-            <button
-              className={`auction-action-btn auction-action-btn--unsold ${currentBidTeamId ? 'auction-action-btn--unsold-disabled' : ''}`}
-              type="button"
-              onClick={onUnsold}
-              disabled={!!currentBidTeamId}
-              title={currentBidTeamId ? 'A team has already bid – sell to that team instead' : undefined}
-            >
-              Mark Unsold
-            </button>
-            <button type="button" className="auction-end-btn-inline" onClick={() => setShowEndConfirm(true)}>
-              End auction
-            </button>
-          </div>
+          {isParticipantView && currentPlayer && (
+            <div className="auction-participant-bid">
+              <button
+                type="button"
+                className="auction-participant-bid-btn"
+                disabled={!participantCanBid || !participantNextBidCr}
+                onClick={() => {
+                  if (!participantCanBid || !participantNextBidCr || !myTeamId) return;
+                  onBid(myTeamId);
+                }}
+              >
+                {participantCanBid && participantNextBidCr
+                  ? `Bid ${formatPriceCr(participantNextBidCr)}`
+                  : isOwnTeamLeading
+                    ? 'You are currently leading'
+                    : 'Waiting for your turn'}
+              </button>
+              <p className="auction-participant-bid-hint">
+                {leadingTeamLabel
+                  ? `Currently leading: ${leadingTeamLabel}`
+                  : 'No bids yet – you can start the bidding.'}
+              </p>
+            </div>
+          )}
 
-          <div className="auction-teams-strip">
-            {teams.map((team) => {
-              const canBid = canTeamBidForPlayer(team);
-              const isLeading = team.id === currentBidTeamId;
-              const nextBidCr = currentPlayer && currentBidCr != null ? getNextBid(currentBidCr, currentPlayer.basePriceCr) : 0;
-              const canAfford = currentPlayer && canTeamAfford(team, nextBidCr);
-              const isLeadingSoCannotBidAgain = isLeading;
-              const chipDisabled = !canBid || !currentPlayer || !canAfford || isLeadingSoCannotBidAgain;
-              return (
+          {isAuctioneer && (
+            <>
+              {connectionError && (
+                <p className="auction-connection-error" role="alert">
+                  {connectionError}
+                </p>
+              )}
+              <div className="auction-hint auction-hint--above">
+                Once bidding ends, select the winning team and click ‘Sell To’ to award the player.
+              </div>
+              <div className="auction-actions auction-actions--row">
+                {!currentBidTeamId && (
+                  <button
+                    className="auction-action-btn auction-action-btn--unsold auction-mark-unsold-btn"
+                    type="button"
+                    onClick={() => onUnsold()}
+                  >
+                    Mark Unsold
+                  </button>
+                )}
                 <button
-                  key={team.id}
+                  className={`auction-action-btn auction-sell-to-team-btn ${
+                    currentBidTeamId ? 'auction-action-btn--sold' : 'auction-sell-to-team-btn--no-bid'
+                  }`}
                   type="button"
-                  className={`auction-team-chip ${!canBid ? 'auction-team-chip--full' : ''} ${isLeading ? 'auction-team-chip--leading' : ''}`}
-                  style={{ backgroundColor: team.primaryColor, color: '#fff' }}
                   onClick={() => {
-                    if (chipDisabled) return;
-                    onSelectSellTeamId(team.id);
-                    if (!isLeadingSoCannotBidAgain) onBid(team.id);
+                    if (!effectiveSellTeamId || !canSelectedTeamAccept) return;
+                    onSellToTeam(effectiveSellTeamId);
                   }}
-                  disabled={chipDisabled}
+                  disabled={!currentBidTeamId || !effectiveSellTeamId || !canSelectedTeamAccept}
                 >
-                  <span className="chip-name">{team.shortName}</span>
+                  {sellButtonLabel}
                 </button>
-              );
-            })}
-          </div>
+                <button
+                  type="button"
+                  className="auction-end-btn-inline"
+                  onClick={() => setShowEndConfirm(true)}
+                >
+                  End auction
+                </button>
+              </div>
+            </>
+          )}
 
           {showEndConfirm && (
             <div className="auction-end-confirm-backdrop" onClick={() => setShowEndConfirm(false)}>
@@ -245,7 +326,9 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
           <Toast
             data={toast}
             soldImageUrl={soldImageUrl}
+            unsoldImageUrl={unsoldImageUrl}
             onDismiss={onDismissToast}
+            duration={2000}
           />
         </div>
       )}

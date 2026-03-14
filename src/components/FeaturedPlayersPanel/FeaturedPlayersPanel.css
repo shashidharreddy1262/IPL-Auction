@@ -1,0 +1,54 @@
+.landing-featured-panel {
+  min-width: 0;
+  height: 300px;
+  min-height: 300px;
+  max-height: 300px;
+  overflow: hidden;
+}
+
+.landing-featured-list {
+  margin-top: 2px;
+}
+
+.landing-featured-body {
+  margin-top: 4px;
+}
+
+.landing-featured-panel .available-list {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.landing-featured-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.landing-featured-filter-input,
+.landing-featured-select {
+  min-width: 0;
+}
+
+.landing-featured-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.landing-panel-title-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.landing-panel-title-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--accent-blue-strong);
+}

@@ -6,47 +6,31 @@
 
 .app-header {
   margin-bottom: 16px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
 }
 
 .app-header-inner {
   text-align: center;
 }
 
-/* Single row: [logos left] [title] [logos right] – generous gap for breathing room, especially on mobile */
 .app-header-logos-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 32px;
-  margin-bottom: 10px;
-  flex-wrap: nowrap;
+  margin-bottom: 6px;
 }
 
 .app-header-teams {
   display: flex;
   align-items: center;
   gap: 4px;
-  flex: 0 0 auto;
-}
-
-.app-header-teams--left {
-  justify-content: flex-end;
-}
-
-.app-header-teams--right {
-  justify-content: flex-start;
 }
 
 .app-header-brand {
-  flex: 1 1 auto;
-  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 16px;
+  margin-bottom: 4px;
 }
 
 .app-header-team-logo {
@@ -165,18 +149,44 @@
   margin: 0;
   font-size: clamp(0.7rem, 3.5vw, 1.65rem);
   letter-spacing: 0.06em;
-  color: var(--text-main);
   white-space: nowrap;
+  display: inline-flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.app-title-main-base {
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.app-title-main-gradient {
+  font-weight: 800;
+  background: linear-gradient(90deg, #60a5fa, #8b5cf6, #f472b6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.app-title-main-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+}
+
+.app-title-main-icon-svg {
+  width: 18px;
+  height: 18px;
+  color: #fde68a;
 }
 
 .app-subtitle {
   margin: 6px 0 0;
   color: var(--text-muted);
   font-size: 0.85rem;
-  white-space: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding-bottom: 2px;
+  white-space: normal;
+  text-align: center;
 }
 
 
@@ -187,6 +197,109 @@
   justify-content: center;
   gap: 12px;
   margin-top: 14px;
+}
+
+.room-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, opacity 0.2s;
+}
+
+.room-btn--primary {
+  background: linear-gradient(135deg, #4f46e5, #2563eb);
+  color: #f9fafb;
+}
+
+.room-btn--primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+}
+
+.room-btn--primary:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.room-btn--secondary {
+  background: rgba(15, 23, 42, 0.8);
+  color: var(--text-main);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+}
+
+.room-btn--secondary:hover {
+  background: rgba(15, 23, 42, 1);
+  transform: translateY(-1px);
+}
+
+.room-btn--whatsapp {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #ecfdf5;
+}
+
+.room-btn--whatsapp:hover {
+  transform: translateY(-1px);
+}
+
+.room-created {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-id-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+}
+
+.room-id-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent-blue-strong), #8b5cf6);
+  box-shadow: 0 0 0 4px rgba(107, 155, 209, 0.12);
+}
+
+.room-id-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text-main);
+}
+
+.room-share-buttons {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+.room-btn-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
 }
 
 .app-rules-btn {
@@ -212,6 +325,91 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+.room-lobby {
+  margin-bottom: 10px;
+}
+
+.room-lobby-card {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 18px 18px;
+  border-radius: 16px;
+  background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: var(--shadow-subtle);
+}
+
+.room-lobby-header h2 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+
+.room-lobby-header p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.room-lobby-body {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.room-name-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.room-name-input {
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.95);
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.room-name-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.room-create-btn {
+  align-self: flex-start;
+}
+
+.room-lobby-body--created {
+  align-items: stretch;
+}
+
+.room-invite-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.room-invite-input {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.95);
+  color: var(--text-main);
+  font-size: 0.82rem;
+}
+
+.room-invite-input:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 /* Desktop: all three panels visible in one row */
