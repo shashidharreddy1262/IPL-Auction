@@ -91,5 +91,11 @@
   gap: 6px;
   max-height: 360px;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 2px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.unsold-list::-webkit-scrollbar {
+  display: none;
 }

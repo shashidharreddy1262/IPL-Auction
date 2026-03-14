@@ -1,6 +1,7 @@
 // Assets from ipl logos1 folder for header and rules modal
 import iplMainLogo from '../ipl logos1/IPL main logo.jpg';
 import auctionSoldIcon from '../ipl logos1/auction.png';
+import auctionLogo from '../ipl logos1/Auction Logo.avif';
 
 import mi1 from '../ipl logos1/mi1.avif';
 import csk1 from '../ipl logos1/csk1.avif';
@@ -16,6 +17,7 @@ import lsg1 from '../ipl logos1/lsg1.avif';
 export const headerFooterAssets = {
   iplMainLogo,
   auctionSoldIcon,
+  auctionLogo,
 };
 
 // Team logos for header strip: left 5, right 5

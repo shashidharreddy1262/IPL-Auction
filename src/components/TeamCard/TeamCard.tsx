@@ -29,6 +29,10 @@ const TeamCard: React.FC<TeamCardProps> = ({
   const canAcceptDrop = currentPlayer && canBid && onSellToTeam;
   const remainingPurseCr = getRemainingPurseCr(team);
   const logoUrl = getTeamLogoUrl(team.shortName);
+  const headerBackground =
+    team.primaryColor && team.secondaryColor
+      ? `linear-gradient(135deg, ${team.primaryColor} 0%, ${team.secondaryColor} 100%)`
+      : 'linear-gradient(135deg, #111827 0%, #020617 100%)';
 
   const handleDragOver = (e: React.DragEvent) => {
     if (!canAcceptDrop) return;
@@ -47,6 +51,8 @@ const TeamCard: React.FC<TeamCardProps> = ({
     onSellToTeam?.(team.id);
   };
 
+  const isSquadFull = team.players.length >= team.maxPlayers;
+
   return (
     <div
       className={`team-card ${isDragOver ? 'team-card--drag-over' : ''}`}
@@ -59,9 +65,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
     >
       <div
         className="team-header team-header--gradient"
-        style={{
-          background: `linear-gradient(135deg, ${team.primaryColor} 0%, ${team.secondaryColor} 100%)`,
-        }}
+        style={{ background: headerBackground }}
       >
         {logoUrl && (
           <img src={logoUrl} alt={team.name} className="team-logo" />
@@ -101,9 +105,9 @@ const TeamCard: React.FC<TeamCardProps> = ({
           onClick={onBid}
           disabled={disabled}
         >
-          {disabled ? label : isLeadingBidder ? 'Increase Bid' : `Bid for ${currentPlayer?.name}`}
+          {disabled ? label : `Bid for ${currentPlayer?.name}`}
         </button>
-        {!canBid && <span className="team-full-warning">Squad full</span>}
+        {isSquadFull && <span className="team-full-warning">Squad full</span>}
       </div>
     </div>
   );

@@ -23,6 +23,8 @@ export const teamLogoMap: Record<string, string> = {
   lsg,
 };
 
-export function getTeamLogoUrl(shortName: string): string | undefined {
-  return teamLogoMap[shortName.toLowerCase()];
+export function getTeamLogoUrl(shortName?: string | null): string | undefined {
+  if (!shortName) return undefined;
+  const key = shortName.trim().toLowerCase();
+  return teamLogoMap[key];
 }

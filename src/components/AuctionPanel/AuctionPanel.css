@@ -208,11 +208,68 @@
 }
 
 .auction-leading .value {
-  font-size: 0.85rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
+.auction-participant-bid {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auction-participant-bid-btn {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  /* Match the "Sell to" button (auction-action-btn--sold) */
+  background: var(--success);
+  color: #051b0c;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.15s, opacity 0.15s ease-out;
+}
+
+.auction-participant-bid-btn:hover:not(:disabled) {
+  background: #22c55e;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.5);
+}
+
+.auction-participant-bid-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+}
+
+.auction-participant-bid-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
 }
 
 .auction-hint {
   font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.auction-connection-error {
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  font-size: 0.8rem;
   color: var(--text-muted);
 }
 
@@ -263,26 +320,33 @@
 }
 
 .auction-action-btn--unsold {
-  background: rgba(255, 77, 106, 0.15);
-  color: var(--danger);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+.auction-mark-unsold-btn {
+  min-width: 120px;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
 }
 
 .auction-action-btn--unsold:hover:not(:disabled) {
-  background: rgba(255, 77, 106, 0.25);
+  background: rgba(255, 255, 255, 0.16);
   transform: translateY(-0.5px);
 }
 
 /* Mark Unsold disabled when a team has already bid */
 .auction-action-btn--unsold-disabled,
 .auction-action-btn--unsold:disabled {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-muted);
   opacity: 0.7;
   cursor: default !important;
 }
 
 .auction-action-btn--unsold:disabled:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   transform: none;
 }
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import './TeamsPanel.css';
 import type { Player, TeamWithPlayers } from '../../types';
-import { canTeamBidForPlayer } from '../../utils/auction';
 import TeamCard from '../TeamCard/TeamCard';
+import { UsersIcon } from '@heroicons/react/24/outline';
 
 interface TeamsPanelProps {
   teams: TeamWithPlayers[];
@@ -12,6 +12,8 @@ interface TeamsPanelProps {
   currentBidTeamId: string | null;
   onTeamBid: (teamId: string) => void;
   onSellToTeam: (teamId: string) => void;
+  role: 'AUCTIONEER' | 'PARTICIPANT';
+  myTeamId: string | null;
 }
 
 const TeamsPanel: React.FC<TeamsPanelProps> = ({
@@ -22,36 +24,58 @@ const TeamsPanel: React.FC<TeamsPanelProps> = ({
   currentBidTeamId,
   onTeamBid,
   onSellToTeam,
+  role,
+  myTeamId,
 }) => {
+  const safeTeams = Array.isArray(teams) ? teams : [];
   return (
     <section className="panel-card teams-panel">
       <div className="panel-header">
-        <h2 className="panel-title">Teams</h2>
-        {auctionStarted && <span className="panel-count">{teams.length}</span>}
+        <h2 className="panel-title landing-panel-title-with-icon">
+          <UsersIcon className="landing-panel-title-icon" />
+          <span>Teams</span>
+        </h2>
+        {auctionStarted && safeTeams.length > 0 && (
+          <span className="panel-count">{safeTeams.length}</span>
+        )}
       </div>
 
       {!auctionStarted ? (
         <div className="teams-panel-empty">
-          <p className="teams-panel-empty-text">Start the auction and select default or custom teams to see them here.</p>
+          <p className="teams-panel-empty-text">
+            No teams in this room yet. When participants join with a team name, they will appear here.
+          </p>
+        </div>
+      ) : safeTeams.length === 0 ? (
+        <div className="teams-panel-empty">
+          <p className="teams-panel-empty-text">
+            No teams in this room yet. When participants join with a team name, they will appear here.
+          </p>
         </div>
       ) : (
-      <div className="teams-grid">
-        {teams.map((team) => {
-          const isLeading = team.id === currentBidTeamId;
-          const canBid = canTeamBidForPlayer(team);
-          return (
-            <TeamCard
-              key={team.id}
-              team={team}
-              currentPlayer={currentPlayer}
-              isLeadingBidder={isLeading}
-              canBid={canBid}
-              onBid={() => onTeamBid(team.id)}
-              onSellToTeam={onSellToTeam}
-            />
-          );
-        })}
-      </div>
+        <div className="teams-grid">
+          {safeTeams.map((team) => {
+            const isLeading = team.id === currentBidTeamId;
+            const isOwnTeam = myTeamId != null && team.id === myTeamId;
+            const isParticipant = role === 'PARTICIPANT';
+            const isLeadingSoCannotBidAgain = isLeading;
+            // Frontend only gates by role + own team + live player + not already leading;
+            // backend validates purse/squad size etc.
+            const effectiveCanBid =
+              isParticipant && isOwnTeam && !!currentPlayer && !isLeadingSoCannotBidAgain;
+            return (
+              <TeamCard
+                key={team.id}
+                team={team}
+                currentPlayer={currentPlayer}
+                isLeadingBidder={isLeading}
+                canBid={effectiveCanBid}
+                onBid={() => onTeamBid(team.id)}
+                onSellToTeam={onSellToTeam}
+              />
+            );
+          })}
+        </div>
       )}
 
       {auctionStarted && currentPlayer && (

@@ -13,6 +13,7 @@ interface AvailablePlayersPanelProps {
   onSetIdChange: (id: string) => void;
   sets: AuctionSet[];
   hasPlayerInAuction: boolean;
+  isAuctioneer?: boolean;
 }
 
 const AvailablePlayersPanel: React.FC<AvailablePlayersPanelProps> = ({
@@ -24,6 +25,7 @@ const AvailablePlayersPanel: React.FC<AvailablePlayersPanelProps> = ({
   onSetIdChange,
   sets,
   hasPlayerInAuction,
+  isAuctioneer = true,
 }) => {
   const [setDropdownOpen, setSetDropdownOpen] = useState(false);
   const canSendToAuction = auctionStarted && !hasPlayerInAuction;
@@ -85,11 +87,17 @@ const AvailablePlayersPanel: React.FC<AvailablePlayersPanelProps> = ({
                   <PlayerCard
                     key={player.id}
                     player={player}
-                    actionLabel={isPlayerInAuction(player.id) ? 'In Auction' : 'Send to Auction'}
-                    onClick={
-                      canSendToAuction && !isPlayerInAuction(player.id) ? () => onStartAuction(player.id) : undefined
+                    actionLabel={
+                      isAuctioneer
+                        ? (isPlayerInAuction(player.id) ? 'In Auction' : 'Send to Auction')
+                        : undefined
                     }
-                    disabled={isPlayerInAuction(player.id) || !canSendToAuction}
+                    onClick={
+                      isAuctioneer && canSendToAuction && !isPlayerInAuction(player.id)
+                        ? () => onStartAuction(player.id)
+                        : undefined
+                    }
+                    disabled={isAuctioneer ? (isPlayerInAuction(player.id) || !canSendToAuction) : false}
                   />
                 ))}
               </div>

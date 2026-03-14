@@ -65,13 +65,13 @@ const RulesModal: React.FC<RulesModalProps> = ({ isOpen, onClose, iplMainLogoUrl
                 </tr>
               </thead>
               <tbody>
-                <tr><td>₹30L – ₹1 Cr</td><td>₹5 Lakhs</td></tr>
-                <tr><td>₹1 Cr – ₹2 Cr</td><td>₹10 Lakhs</td></tr>
-                <tr><td>₹2 Cr – ₹5 Cr</td><td>₹20 Lakhs</td></tr>
-                <tr><td>Above ₹5 Cr</td><td>₹25 Lakhs</td></tr>
+                <tr><td>₹10L – ₹1 Cr</td><td>₹5 Lakhs</td></tr>
+                <tr><td>₹1 Cr – ₹5 Cr</td><td>₹10 Lakhs</td></tr>
+                <tr><td>₹5 Cr – ₹10 Cr</td><td>₹20 Lakhs</td></tr>
+                <tr><td>Above ₹10 Cr</td><td>₹25 Lakhs</td></tr>
               </tbody>
             </table>
-            <p>Minimum base price of any player: ₹30 Lakhs</p>
+            <p>Minimum base price of any player: ₹10 Lakhs</p>
           </section>
 
           <section>

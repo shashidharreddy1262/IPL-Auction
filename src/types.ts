@@ -11,9 +11,27 @@ export interface Player {
   status: PlayerStatus;
   soldPriceCr?: number;
   soldToTeamId?: string;
-  setId: string; // which auction set this player belongs to (e.g. marquee, batsmen)
-  franchise?: string; // current IPL team shortName e.g. RCB, MI
-  capped?: boolean; // capped or uncapped
+  setId: string; // which auction set this player belongs to (from set_number / set_contains in DB)
+  franchise?: string; // current IPL team shortName e.g. RCB, MI (from DB franchise)
+  capped?: boolean; // capped or uncapped (from DB capped)
+}
+
+/** Raw player shape from backend DB /api/players (snake_case or camelCase) */
+export interface PlayerFromApi {
+  id?: number | string;
+  name?: string;
+  role?: string;
+  country?: string;
+  base_price_cr?: number;
+  basePriceCr?: number;
+  status?: string;
+  franchise?: string;
+  capped?: number | boolean;
+  set_number?: number;
+  set_contains?: string;
+  setNumber?: number;
+  setContains?: string;
+  setId?: string;
 }
 
 export interface Team {

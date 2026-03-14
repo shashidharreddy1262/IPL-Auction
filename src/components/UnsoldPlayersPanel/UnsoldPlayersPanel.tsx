@@ -9,6 +9,7 @@ interface UnsoldPlayersPanelProps {
   onAddBackToPool: (playerId: string) => void;
   auctionStarted: boolean;
   toastVisible?: boolean;
+  isAuctioneer?: boolean;
 }
 
 const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
@@ -17,6 +18,7 @@ const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
   onAddBackToPool,
   auctionStarted,
   toastVisible = false,
+  isAuctioneer = true,
 }) => {
   const [search, setSearch] = useState('');
 
@@ -32,13 +34,15 @@ const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
     );
   }, [players, search]);
 
+  const showUnsoldList = auctionStarted && players.length > 0;
+
   return (
     <section className="panel-card unsold-panel">
       <div className="panel-header">
         <h2 className="panel-title">Unsold Players</h2>
         {auctionStarted && <span className="panel-count">{players.length}</span>}
       </div>
-      {players.length > 0 && (
+      {showUnsoldList && (
         <>
           <input
             type="text"
@@ -47,18 +51,20 @@ const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="unsold-actions">
-            <button type="button" className="unsold-reauction-btn" onClick={onReAuctionAll} disabled={toastVisible}>
-              Re-auction all ({players.length})
-            </button>
-          </div>
+          {isAuctioneer && (
+            <div className="unsold-actions">
+              <button type="button" className="unsold-reauction-btn" onClick={onReAuctionAll} disabled={toastVisible}>
+                Re-auction all ({players.length})
+              </button>
+            </div>
+          )}
         </>
       )}
       <div className="unsold-body">
-        {players.length === 0 ? (
-          auctionStarted ? (
-            <div className="empty-state">No unsold players yet.</div>
-          ) : null
+        {!auctionStarted ? (
+          <div className="empty-state">Start the auction to see unsold players here.</div>
+        ) : players.length === 0 ? (
+          <div className="empty-state">No unsold players yet.</div>
         ) : filtered.length === 0 ? (
           <div className="empty-state">No players match your search.</div>
         ) : (
@@ -66,14 +72,16 @@ const UnsoldPlayersPanel: React.FC<UnsoldPlayersPanelProps> = ({
             {filtered.map((player) => (
               <div key={player.id} className="unsold-player-row">
                 <PlayerCard player={player} />
-                <button
-                  type="button"
-                  className="unsold-add-back-btn"
-                  onClick={() => onAddBackToPool(player.id)}
-                  disabled={toastVisible}
-                >
-                  Add back to pool
-                </button>
+                {isAuctioneer && (
+                  <button
+                    type="button"
+                    className="unsold-add-back-btn"
+                    onClick={() => onAddBackToPool(player.id)}
+                    disabled={toastVisible}
+                  >
+                    Add back to pool
+                  </button>
+                )}
               </div>
             ))}
           </div>
