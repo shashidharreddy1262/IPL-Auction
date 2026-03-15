@@ -76,9 +76,11 @@
 }
 
 .team-count--badge {
-  font-size: 0.75rem;
-  opacity: 0.95;
+  font-size: 0.82rem;
+  font-weight: 700;
   flex-shrink: 0;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .team-count {
@@ -87,8 +89,9 @@
 }
 
 .team-count-max {
-  font-size: 0.7rem;
-  color: var(--text-muted);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 600;
 }
 
 .team-body {

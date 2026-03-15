@@ -15,9 +15,13 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [creating, setCreating] = useState(false);
+  const [resuming, setResuming] = useState(false);
   const [showRoomModal, setShowRoomModal] = useState(false);
-  const [mode, setMode] = useState<'create' | 'join'>('create');
+  const [mode, setMode] = useState<'create' | 'join' | 'resume'>('create');
   const [roomCode, setRoomCode] = useState('');
+  const [maxPlayersPerTeam, setMaxPlayersPerTeam] = useState('25');
+  const [budgetCrPerTeam, setBudgetCrPerTeam] = useState('120');
+  const [roomModalError, setRoomModalError] = useState<string | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [resultsRoomId, setResultsRoomId] = useState('');
   const [showRules, setShowRules] = useState(false);
@@ -25,11 +29,26 @@ const LandingPage = () => {
 
   const handleCreateRoom = useCallback(async () => {
     if (!name.trim() || creating) return;
+    const parsedMaxPlayers = Number(maxPlayersPerTeam);
+    const parsedBudget = Number(budgetCrPerTeam);
+    if (!Number.isFinite(parsedMaxPlayers) || parsedMaxPlayers <= 0) {
+      setRoomModalError('Enter a valid max players value.');
+      return;
+    }
+    if (!Number.isFinite(parsedBudget) || parsedBudget <= 0) {
+      setRoomModalError('Enter a valid purse amount.');
+      return;
+    }
     try {
       setCreating(true);
+      setRoomModalError(null);
       const response = await fetch(buildApiUrl('/api/rooms'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          maxPlayersPerTeam: parsedMaxPlayers,
+          budgetCrPerTeam: parsedBudget,
+        }),
       });
       if (!response.ok) {
         // eslint-disable-next-line no-console
@@ -60,7 +79,7 @@ const LandingPage = () => {
     } finally {
       setCreating(false);
     }
-  }, [name, creating, navigate]);
+  }, [name, creating, navigate, maxPlayersPerTeam, budgetCrPerTeam]);
 
   const handleJoinRoom = useCallback(() => {
     if (!name.trim() || !roomCode.trim()) return;
@@ -69,6 +88,30 @@ const LandingPage = () => {
     // Participants always join as participants, regardless of any prior role selection
     navigate(`/room/${trimmedCode}?role=participant&name=${encodedName}`);
   }, [name, roomCode, navigate]);
+
+  const handleResumeRoom = useCallback(async () => {
+    if (!name.trim() || !roomCode.trim() || resuming) return;
+    try {
+      setResuming(true);
+      setRoomModalError(null);
+      const trimmedCode = roomCode.trim();
+      const response = await fetch(buildApiUrl(`/api/rooms/${trimmedCode}/state`));
+      if (response.status === 404) {
+        setRoomModalError('Room not found. Please check the room ID and try again.');
+        return;
+      }
+      if (!response.ok) {
+        setRoomModalError(`Unable to resume room right now (status ${response.status}).`);
+        return;
+      }
+      const encodedName = encodeURIComponent(name.trim());
+      navigate(`/room/${trimmedCode}?role=auctioneer&name=${encodedName}`);
+    } catch {
+      setRoomModalError('Unable to connect to the backend. Please try again.');
+    } finally {
+      setResuming(false);
+    }
+  }, [name, roomCode, resuming, navigate]);
 
   const handleViewResults = useCallback(() => {
     if (!resultsRoomId.trim()) return;
@@ -185,16 +228,32 @@ const LandingPage = () => {
                     <button
                       type="button"
                       className={`room-modal-tab ${mode === 'create' ? 'room-modal-tab--active' : ''}`}
-                      onClick={() => setMode('create')}
+                      onClick={() => {
+                        setMode('create');
+                        setRoomModalError(null);
+                      }}
                     >
                       Create room
                     </button>
                     <button
                       type="button"
                       className={`room-modal-tab ${mode === 'join' ? 'room-modal-tab--active' : ''}`}
-                      onClick={() => setMode('join')}
+                      onClick={() => {
+                        setMode('join');
+                        setRoomModalError(null);
+                      }}
                     >
                       Join room
+                    </button>
+                    <button
+                      type="button"
+                      className={`room-modal-tab ${mode === 'resume' ? 'room-modal-tab--active' : ''}`}
+                      onClick={() => {
+                        setMode('resume');
+                        setRoomModalError(null);
+                      }}
+                    >
+                      Resume room
                     </button>
                   </div>
                   <div className="room-modal-body">
@@ -209,17 +268,55 @@ const LandingPage = () => {
                       />
                     </label>
 
-                    {mode === 'join' && (
+                    {mode !== 'create' && (
                       <label className="landing-label">
                         Room ID
                         <input
                           type="text"
                           className="landing-input"
-                          placeholder="Enter room ID shared by auctioneer"
+                          placeholder={
+                            mode === 'resume'
+                              ? 'Enter room ID to resume as auctioneer'
+                              : 'Enter room ID shared by auctioneer'
+                          }
                           value={roomCode}
                           onChange={(e) => setRoomCode(e.target.value)}
                         />
                       </label>
+                    )}
+
+                    {mode === 'create' && (
+                      <div className="room-config-grid">
+                        <label className="landing-label">
+                          Max players per team
+                          <input
+                            type="number"
+                            min="1"
+                            className="landing-input"
+                            placeholder="25"
+                            value={maxPlayersPerTeam}
+                            onChange={(e) => setMaxPlayersPerTeam(e.target.value)}
+                          />
+                        </label>
+                        <label className="landing-label">
+                          Purse per team (Cr)
+                          <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            className="landing-input"
+                            placeholder="120"
+                            value={budgetCrPerTeam}
+                            onChange={(e) => setBudgetCrPerTeam(e.target.value)}
+                          />
+                        </label>
+                      </div>
+                    )}
+
+                    {roomModalError && (
+                      <p className="room-modal-error" role="alert">
+                        {roomModalError}
+                      </p>
                     )}
                   </div>
                   <div className="room-modal-actions">
@@ -236,15 +333,22 @@ const LandingPage = () => {
                       disabled={
                         !name.trim() ||
                         creating ||
-                        (mode === 'join' && !roomCode.trim())
+                        resuming ||
+                        (mode !== 'create' && !roomCode.trim())
                       }
-                      onClick={mode === 'create' ? handleCreateRoom : handleJoinRoom}
+                      onClick={
+                        mode === 'create'
+                          ? handleCreateRoom
+                          : mode === 'resume'
+                            ? handleResumeRoom
+                            : handleJoinRoom
+                      }
                     >
                       {mode === 'create'
-                        ? creating
-                          ? 'Creating room…'
-                          : 'Create Room'
-                        : 'Join Room'}
+                        ? creating ? 'Creating room…' : 'Create Room'
+                        : mode === 'resume'
+                          ? resuming ? 'Resuming room…' : 'Resume Room'
+                          : 'Join Room'}
                     </button>
                   </div>
                 </div>

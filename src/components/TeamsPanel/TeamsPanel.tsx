@@ -3,6 +3,7 @@ import './TeamsPanel.css';
 import type { Player, TeamWithPlayers } from '../../types';
 import TeamCard from '../TeamCard/TeamCard';
 import { UsersIcon } from '@heroicons/react/24/outline';
+import { canTeamAfford, canTeamBidForPlayer, getNextBid } from '../../utils/auction';
 
 interface TeamsPanelProps {
   teams: TeamWithPlayers[];
@@ -59,10 +60,17 @@ const TeamsPanel: React.FC<TeamsPanelProps> = ({
             const isOwnTeam = myTeamId != null && team.id === myTeamId;
             const isParticipant = role === 'PARTICIPANT';
             const isLeadingSoCannotBidAgain = isLeading;
-            // Frontend only gates by role + own team + live player + not already leading;
-            // backend validates purse/squad size etc.
+            const nextBidAmount =
+              currentPlayer
+                ? getNextBid(currentBidTeamId ? currentBidCr : null, currentPlayer.basePriceCr)
+                : null;
             const effectiveCanBid =
-              isParticipant && isOwnTeam && !!currentPlayer && !isLeadingSoCannotBidAgain;
+              isParticipant &&
+              isOwnTeam &&
+              !!currentPlayer &&
+              !isLeadingSoCannotBidAgain &&
+              canTeamBidForPlayer(team) &&
+              (nextBidAmount == null || canTeamAfford(team, nextBidAmount));
             return (
               <TeamCard
                 key={team.id}

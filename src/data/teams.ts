@@ -7,15 +7,15 @@ export const MAX_CUSTOM_TEAMS = 30;
 
 // Color palette for custom teams (primary, secondary) – used when creating 5–30 custom teams
 export const CUSTOM_TEAM_COLORS: [string, string][] = [
-  ['#004ba0', '#a8b2c0'],
+  ['#003d94', '#5ab4e5'],
   ['#c9a227', '#8b6914'],
   ['#da121a', '#1a1a2e'],
-  ['#3f1052', '#e1b32c'],
+  ['#2d0764', '#c9a227'],
   ['#ea1a8c', '#004ba0'],
   ['#f26522', '#000000'],
   ['#004c93', '#7c3aed'],
   ['#b22222', '#d4a574'],
-  ['#0d47a1', '#f7d358'],
+  ['#1a3a5c', '#b8963e'],
   ['#8B1538', '#ff6b35'],
   ['#2e7d32', '#c8e6c9'],
   ['#6a1b9a', '#e1bee7'],
@@ -60,14 +60,14 @@ export function buildCustomTeams(names: string[]): TeamWithPlayers[] {
 
 // Two-color gradient per team (primary → secondary), jersey-style
 export const initialTeams: TeamWithPlayers[] = [
-  { id: 't1', name: 'Mumbai Indians', shortName: 'MI', primaryColor: '#004ba0', secondaryColor: '#a8b2c0', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
+  { id: 't1', name: 'Mumbai Indians', shortName: 'MI', primaryColor: '#003d94', secondaryColor: '#5ab4e5', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
   { id: 't2', name: 'Chennai Super Kings', shortName: 'CSK', primaryColor: '#c9a227', secondaryColor: '#8b6914', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
   { id: 't3', name: 'Royal Challengers Bengaluru', shortName: 'RCB', primaryColor: '#da121a', secondaryColor: '#1a1a2e', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
-  { id: 't4', name: 'Kolkata Knight Riders', shortName: 'KKR', primaryColor: '#3f1052', secondaryColor: '#e1b32c', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
+  { id: 't4', name: 'Kolkata Knight Riders', shortName: 'KKR', primaryColor: '#2d0764', secondaryColor: '#c9a227', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
   { id: 't5', name: 'Rajasthan Royals', shortName: 'RR', primaryColor: '#ea1a8c', secondaryColor: '#004ba0', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
   { id: 't6', name: 'Sunrisers Hyderabad', shortName: 'SRH', primaryColor: '#f26522', secondaryColor: '#000000', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
   { id: 't7', name: 'Delhi Capitals', shortName: 'DC', primaryColor: '#004c93', secondaryColor: '#7c3aed', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
   { id: 't8', name: 'Punjab Kings', shortName: 'PBKS', primaryColor: '#b22222', secondaryColor: '#d4a574', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
-  { id: 't9', name: 'Gujarat Titans', shortName: 'GT', primaryColor: '#0d47a1', secondaryColor: '#f7d358', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
+  { id: 't9', name: 'Gujarat Titans', shortName: 'GT', primaryColor: '#1a3a5c', secondaryColor: '#b8963e', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
   { id: 't10', name: 'Lucknow Super Giants', shortName: 'LSG', primaryColor: '#8B1538', secondaryColor: '#ff6b35', maxPlayers: MAX_PLAYERS_PER_TEAM, budgetCr: TEAM_BUDGET_CR, players: [] },
 ];
