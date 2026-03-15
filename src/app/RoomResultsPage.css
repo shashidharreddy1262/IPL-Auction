@@ -40,8 +40,9 @@
 }
 
 .results-team-chip--active {
-  background: linear-gradient(135deg, #4f46e5, #2563eb);
-  border-color: transparent;
+  background: rgba(255, 159, 28, 0.12);
+  border-color: var(--accent);
+  color: var(--accent-strong);
   transform: translateY(-1px);
 }
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './AuctionPanel.css';
 import type { Player, TeamWithPlayers } from '../../types';
-import { formatPriceCr, getNextBid } from '../../utils/auction';
+import { canTeamAfford, canTeamBidForPlayer, formatPriceCr, getNextBid } from '../../utils/auction';
 import Toast from '../Toast/Toast';
 import type { ToastData } from '../Toast/Toast';
 
@@ -84,20 +84,33 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
     : null;
 
   const isParticipantView = role === 'PARTICIPANT';
+  const myTeam =
+    safeTeams.find(
+      (team) =>
+        String(team.id) === String(myTeamId) ||
+        (myTeamId != null && team.name?.trim().toLowerCase() === String(myTeamId).trim().toLowerCase())
+    ) || null;
   const isOwnTeamLeading =
     isParticipantView &&
     myTeamId != null &&
     currentBidTeamId != null &&
     String(currentBidTeamId) === String(myTeamId);
-  const participantCanBid =
-    isParticipantView && !!myTeamId && !!currentPlayer && !isOwnTeamLeading;
-
   // If no leading team yet, ignore currentBidCr (backend sets it to basePriceCr on select)
   // so first bid = basePriceCr; otherwise increment from currentBidCr
   const participantNextBidCr =
-    currentPlayer && participantCanBid
+    currentPlayer && isParticipantView && !!myTeamId
       ? getNextBid(currentBidTeamId ? currentBidCr : null, currentPlayer.basePriceCr)
       : null;
+  const isParticipantSquadFull = !!myTeam && !canTeamBidForPlayer(myTeam);
+  const isParticipantShortOnPurse =
+    !!myTeam && participantNextBidCr != null && !canTeamAfford(myTeam, participantNextBidCr);
+  const participantCanBid =
+    isParticipantView &&
+    !!myTeamId &&
+    !!currentPlayer &&
+    !isOwnTeamLeading &&
+    !isParticipantSquadFull &&
+    !isParticipantShortOnPurse;
   const sellButtonLabel =
     currentBidTeamId && selectedTeam
       ? `Sell to ${selectedTeam.shortName || selectedTeam.name || 'team'}`
@@ -248,10 +261,18 @@ const AuctionPanel: React.FC<AuctionPanelProps> = ({
                   ? `Bid ${formatPriceCr(participantNextBidCr)}`
                   : isOwnTeamLeading
                     ? 'You are currently leading'
+                    : isParticipantSquadFull
+                      ? 'Squad complete'
+                      : isParticipantShortOnPurse
+                        ? 'Insufficient purse'
                     : 'Waiting for your turn'}
               </button>
               <p className="auction-participant-bid-hint">
-                {leadingTeamLabel
+                {isParticipantSquadFull
+                  ? 'You have completed your squad.'
+                  : isParticipantShortOnPurse
+                    ? 'You do not have enough purse left for the next bid.'
+                : leadingTeamLabel
                   ? `Currently leading: ${leadingTeamLabel}`
                   : 'No bids yet – you can start the bidding.'}
               </p>
